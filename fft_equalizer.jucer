@@ -6,11 +6,13 @@
     <GROUP id="{BE0327E4-5656-18C4-0BE8-1AE4CEE19E3E}" name="Source">
       <FILE id="j8oHtK" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     </GROUP>
+    <FILE id="J0wLg0" name="AudioPlayer.cpp" compile="1" resource="0" file="Source/AudioPlayer.cpp"/>
+    <FILE id="XqgXSf" name="AudioPlayer.h" compile="0" resource="0" file="Source/AudioPlayer.h"/>
     <FILE id="hvYGP1" name="MainComponent.cpp" compile="1" resource="0"
           file="Source/MainComponent.cpp"/>
     <FILE id="ciSRHX" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
   </MAINGROUP>
-  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_USE_MP3AUDIOFORMAT="1"/>
   <EXPORTFORMATS>
     <VS2022 targetFolder="Builds/VisualStudio2022">
       <CONFIGURATIONS>
