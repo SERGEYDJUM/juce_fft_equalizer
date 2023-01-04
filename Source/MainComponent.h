@@ -5,16 +5,15 @@
 
 class MainComponent : public juce::Component,
                       public juce::Slider::Listener,
-                      public juce::Button::Listener
-{
-public:
+                      public juce::Button::Listener {
+   public:
     MainComponent();
     ~MainComponent() override;
 
     void paint(juce::Graphics &g) override;
     void resized() override;
 
-private:
+   private:
     const int band_number = 11;
     juce::OwnedArray<juce::Slider> knobs;
     juce::OwnedArray<juce::Label> knob_labels;

@@ -1,10 +1,8 @@
 #include "MainComponent.h"
 
-MainComponent::MainComponent()
-{
+MainComponent::MainComponent() {
     int band_center = 16;
-    for (int i = 0; i < band_number; i++)
-    {
+    for (int i = 0; i < band_number; i++) {
         knobs.add(new juce::Slider("knob" + std::to_string(i)));
         juce::Slider *knob = knobs.getLast();
         addAndMakeVisible(knob);
@@ -43,29 +41,28 @@ MainComponent::MainComponent()
     addAndMakeVisible(playback_button.get());
     playback_button->addListener(this);
 
-    player.reset(new AudioPlayer([this](AudioPlayer::PlayerState state)
-                                 {
-    switch (state) {
-      case AudioPlayer::Stopped:
-        playback_button->setButtonText("Play Again");
-        break;
+    player.reset(new AudioPlayer([this](AudioPlayer::PlayerState state) {
+        switch (state) {
+            case AudioPlayer::Stopped:
+                playback_button->setButtonText("Play Again");
+                break;
 
-      case AudioPlayer::Playing:
-        playback_button->setButtonText("Pause");
-        break;
+            case AudioPlayer::Playing:
+                playback_button->setButtonText("Pause");
+                break;
 
-      case AudioPlayer::Paused:
-        playback_button->setButtonText("Resume");
-        break;
-    } }));
+            case AudioPlayer::Paused:
+                playback_button->setButtonText("Resume");
+                break;
+        }
+    }));
 
     addChildComponent(player.get());
 
     setSize(600, 400);
 }
 
-MainComponent::~MainComponent()
-{
+MainComponent::~MainComponent() {
     volume_slider = nullptr;
     fileselection_button = nullptr;
     playback_button = nullptr;
@@ -74,13 +71,11 @@ MainComponent::~MainComponent()
     player = nullptr;
 }
 
-void MainComponent::paint(juce::Graphics &g)
-{
+void MainComponent::paint(juce::Graphics &g) {
     g.fillAll(juce::Colour(0xff323e44));
 }
 
-void MainComponent::resized()
-{
+void MainComponent::resized() {
     using GridTrackInfo = juce::Grid::TrackInfo;
     using GridFr = juce::Grid::Fr;
     using Grid = juce::Grid;
@@ -90,13 +85,11 @@ void MainComponent::resized()
     grid.templateRows = {GridTrackInfo(GridFr(12)), GridTrackInfo(GridFr(1)),
                          GridTrackInfo(GridFr(1)), GridTrackInfo(GridFr(2)),
                          GridTrackInfo(GridFr(1))};
-    for (int i = 0; i < band_number; i++)
-    {
+    for (int i = 0; i < band_number; i++) {
         grid.templateColumns.add(GridTrackInfo(GridFr(1)));
     }
 
-    for (int i = 1; i <= band_number; i++)
-    {
+    for (int i = 1; i <= band_number; i++) {
         GridItem knob_cell{knobs[i - 1]};
         knob_cell.setArea(1, i, 1, i);
         grid.items.add(knob_cell);
@@ -125,30 +118,19 @@ void MainComponent::resized()
     grid.performLayout(getLocalBounds());
 }
 
-void MainComponent::sliderValueChanged(juce::Slider *sliderThatWasMoved)
-{
-    if (sliderThatWasMoved == volume_slider.get())
-    {
-    }
-    else
-    {
+void MainComponent::sliderValueChanged(juce::Slider *sliderThatWasMoved) {
+    if (sliderThatWasMoved == volume_slider.get()) {
+    } else {
     }
 }
 
-void MainComponent::buttonClicked(juce::Button *buttonThatWasClicked)
-{
-    if (buttonThatWasClicked == fileselection_button.get())
-    {
+void MainComponent::buttonClicked(juce::Button *buttonThatWasClicked) {
+    if (buttonThatWasClicked == fileselection_button.get()) {
         player->selectFile();
-    }
-    else if (buttonThatWasClicked == playback_button.get())
-    {
-        if (player->getState() == AudioPlayer::Playing)
-        {
+    } else if (buttonThatWasClicked == playback_button.get()) {
+        if (player->getState() == AudioPlayer::Playing) {
             player->changeState(AudioPlayer::Paused);
-        }
-        else
-        {
+        } else {
             player->changeState(AudioPlayer::Playing);
         }
     }

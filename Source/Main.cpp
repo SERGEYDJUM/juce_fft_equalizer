@@ -2,23 +2,19 @@
 
 #include "MainComponent.h"
 
-class fft_equalizerApplication : public juce::JUCEApplication
-{
-public:
+class fft_equalizerApplication : public juce::JUCEApplication {
+   public:
     fft_equalizerApplication() {}
 
-    const juce::String getApplicationName() override
-    {
+    const juce::String getApplicationName() override {
         return ProjectInfo::projectName;
     }
-    const juce::String getApplicationVersion() override
-    {
+    const juce::String getApplicationVersion() override {
         return ProjectInfo::versionString;
     }
     bool moreThanOneInstanceAllowed() override { return false; }
 
-    void initialise(const juce::String &commandLine) override
-    {
+    void initialise(const juce::String &commandLine) override {
         commandLine;
         mainWindow.reset(new MainWindow(getApplicationName()));
     }
@@ -27,21 +23,19 @@ public:
 
     void systemRequestedQuit() override { quit(); }
 
-    void anotherInstanceStarted(const juce::String &commandLine) override
-    {
+    void anotherInstanceStarted(const juce::String &commandLine) override {
         commandLine;
     }
 
-    class MainWindow : public juce::DocumentWindow
-    {
-    public:
+    class MainWindow : public juce::DocumentWindow {
+       public:
         MainWindow(juce::String name)
             : DocumentWindow(
                   name,
-                  juce::Desktop::getInstance().getDefaultLookAndFeel().findColour(
-                      juce::ResizableWindow::backgroundColourId),
-                  DocumentWindow::allButtons)
-        {
+                  juce::Desktop::getInstance()
+                      .getDefaultLookAndFeel()
+                      .findColour(juce::ResizableWindow::backgroundColourId),
+                  DocumentWindow::allButtons) {
             setUsingNativeTitleBar(false);
             setContentOwned(new MainComponent(), true);
 
@@ -55,16 +49,15 @@ public:
             setVisible(true);
         }
 
-        void closeButtonPressed() override
-        {
+        void closeButtonPressed() override {
             JUCEApplication::getInstance()->systemRequestedQuit();
         }
 
-    private:
+       private:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainWindow)
     };
 
-private:
+   private:
     std::unique_ptr<MainWindow> mainWindow;
 };
 
