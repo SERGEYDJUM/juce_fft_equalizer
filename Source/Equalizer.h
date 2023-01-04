@@ -7,15 +7,15 @@ class Equalizer {
     ~Equalizer();
 
     /**
-     * @brief Устанавливает громкость 
-     * 
+     * @brief Устанавливает громкость
+     *
      * @param new_volume громкость от 0 до 100
      */
     void setVolume(float new_level);
 
     /**
      * @brief Возвращает громкость плеера
-     * 
+     *
      * @return double - громкость от 0 до 100
      */
     float getVolume() { return level; };
@@ -28,7 +28,7 @@ class Equalizer {
     static constexpr auto fftSize = 1 << fftOrder;
     juce::dsp::FFT forwardFFT;
     std::array<float, fftSize> fifo;
-    std::array<float, fftSize*2> fftData;
+    std::array<float, fftSize * 2> fftData;
     size_t fifoIndex = 0;
     bool nextFFTBlockReady = false;
     float level = 1.0;

@@ -9,7 +9,7 @@ class MainComponent : public juce::Component,
    public:
     MainComponent();
     ~MainComponent() override;
-    
+
     void resized() override;
 
    private:

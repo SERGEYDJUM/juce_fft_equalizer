@@ -1,5 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
+
 #include "Equalizer.h"
 
 /**
@@ -42,7 +43,7 @@ class AudioPlayer : public juce::AudioAppComponent,
      * Асинхронно запускает окно выбора аудиофайла.
      * При этом воспроизведение предыдущего останавливается только если был
      * выбран корректный файл.
-     * 
+     *
      */
     void selectFile();
 
@@ -50,9 +51,9 @@ class AudioPlayer : public juce::AudioAppComponent,
 
    private:
     double playback_position = 0.0;  // Позиция в треке
-    double volume = 100.0; // Громкость
+    double volume = 100.0;           // Громкость
 
-    PlayerState state; // Состояние плеера
+    PlayerState state;  // Состояние плеера
 
     juce::AudioFormatManager format_manager;  // Хранит доступные форматы аудио
 
@@ -72,8 +73,7 @@ class AudioPlayer : public juce::AudioAppComponent,
     // Наследованные от AudioAppComponent методы работы со звуком и этим
     // компонентом
     void changeListenerCallback(juce::ChangeBroadcaster *source) override;
-    void getNextAudioBlock(
-        const juce::AudioSourceChannelInfo &bufferToFill) override;
+    void getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferToFill) override;
     void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
     void releaseResources() override;
 

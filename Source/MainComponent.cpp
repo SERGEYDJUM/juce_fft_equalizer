@@ -117,7 +117,7 @@ void MainComponent::resized() {
 
 void MainComponent::sliderValueChanged(juce::Slider *sliderThatWasMoved) {
     if (sliderThatWasMoved == volume_slider.get()) {
-        player->equalizer.setVolume((float) sliderThatWasMoved->getValue());
+        player->equalizer.setVolume((float)sliderThatWasMoved->getValue());
     }
 }
 

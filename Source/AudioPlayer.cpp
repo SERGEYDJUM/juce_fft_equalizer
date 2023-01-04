@@ -43,18 +43,16 @@ void AudioPlayer::changeListenerCallback(juce::ChangeBroadcaster *source) {
     }
 }
 
-void AudioPlayer::getNextAudioBlock(
-    const juce::AudioSourceChannelInfo &bufferToFill) {
+void AudioPlayer::getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferToFill) {
     if (reader_source.get() == nullptr) {
         bufferToFill.clearActiveBufferRegion();
     } else {
         transport_source.getNextAudioBlock(bufferToFill);
         equalizer.processBuffer(bufferToFill);
-    } 
+    }
 }
 
-void AudioPlayer::prepareToPlay(int samplesPerBlockExpected,
-                                double sampleRate) {
+void AudioPlayer::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {
     transport_source.prepareToPlay(samplesPerBlockExpected, sampleRate);
     equalizer.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
@@ -68,8 +66,7 @@ AudioPlayer::~AudioPlayer() {
 }
 
 void AudioPlayer::selectFile() {
-    chooser = std::make_unique<juce::FileChooser>("Select a file to play...",
-                                                  juce::File{}, "*.wav;*.mp3");
+    chooser = std::make_unique<juce::FileChooser>("Select a file to play...", juce::File{}, "*.wav;*.mp3");
     auto chooser_flags = juce::FileBrowserComponent::openMode |
                          juce::FileBrowserComponent::canSelectFiles;
     chooser->launchAsync(chooser_flags, [this](const juce::FileChooser &fc) {
