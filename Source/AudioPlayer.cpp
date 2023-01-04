@@ -47,20 +47,21 @@ void AudioPlayer::getNextAudioBlock(
     const juce::AudioSourceChannelInfo &bufferToFill) {
     if (reader_source.get() == nullptr) {
         bufferToFill.clearActiveBufferRegion();
-        return;
-    }
-    transport_source.getNextAudioBlock(bufferToFill);
+    } else {
+        transport_source.getNextAudioBlock(bufferToFill);
+        equalizer.processBuffer(bufferToFill);
+    } 
 }
 
 void AudioPlayer::prepareToPlay(int samplesPerBlockExpected,
                                 double sampleRate) {
     transport_source.prepareToPlay(samplesPerBlockExpected, sampleRate);
+    equalizer.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 
 void AudioPlayer::releaseResources() { transport_source.releaseResources(); }
 
 AudioPlayer::~AudioPlayer() {
-    shutdownAudio();
     releaseResources();
     reader_source = nullptr;
     chooser = nullptr;
@@ -83,6 +84,7 @@ void AudioPlayer::selectFile() {
                 transport_source.setSource(new_source.get(), 0, nullptr,
                                            reader->sampleRate);
                 reader_source.reset(new_source.release());
+                changeState(Playing);
             }
         }
     });

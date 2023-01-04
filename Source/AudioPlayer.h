@@ -1,5 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
+#include "Equalizer.h"
 
 /**
  * Воспроизводит аудиофайл формата wav и mp3, позволяет ставить на паузу и
@@ -19,8 +20,7 @@ class AudioPlayer : public juce::AudioAppComponent,
      * \param state_caller Функция, которая будет вызываться при изменении его
      * состояния.
      */
-    AudioPlayer(std::function<void(PlayerState)> state_caller =
-                    [](PlayerState state) { state; });
+    AudioPlayer(std::function<void(PlayerState)> state_caller = [](PlayerState state) { state; });
 
     ~AudioPlayer() override;
 
@@ -42,21 +42,30 @@ class AudioPlayer : public juce::AudioAppComponent,
      * Асинхронно запускает окно выбора аудиофайла.
      * При этом воспроизведение предыдущего останавливается только если был
      * выбран корректный файл.
+     * 
      */
     void selectFile();
 
+    Equalizer equalizer;
+
    private:
     double playback_position = 0.0;  // Позиция в треке
-    PlayerState state;               // Состояние плеера
+    double volume = 100.0; // Громкость
+
+    PlayerState state; // Состояние плеера
+
     juce::AudioFormatManager format_manager;  // Хранит доступные форматы аудио
+
     juce::AudioTransportSource
         transport_source;  // Проигрыватель аудио-буфферов
 
     std::unique_ptr<juce::FileChooser>
         chooser;  // Окно выбора файла, которое необходимо хранить из-за
                   // асинхронности
+
     std::unique_ptr<juce::AudioFormatReaderSource>
         reader_source;  // Считыватель аудио с файла
+
     std::function<void(PlayerState)>
         state_callback;  // Хранит функцию, вызываемую при изменении состояния
 

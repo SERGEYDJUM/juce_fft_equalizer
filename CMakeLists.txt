@@ -9,7 +9,6 @@ FetchContent_Declare(JUCE
   GIT_SHALLOW TRUE
   GIT_PROGRESS TRUE
 )
-
 FetchContent_MakeAvailable(JUCE)
 
 juce_add_gui_app(fft_equalizer PRODUCT_NAME "FFT Equalizer")
@@ -20,6 +19,7 @@ target_sources(fft_equalizer
         Source/Main.cpp 
         Source/MainComponent.cpp 
         Source/AudioPlayer.cpp
+        Source/Equalizer.cpp
 )
 
 target_compile_definitions(fft_equalizer

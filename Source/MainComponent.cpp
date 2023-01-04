@@ -40,6 +40,7 @@ MainComponent::MainComponent() {
     playback_button.reset(new juce::TextButton("Play"));
     addAndMakeVisible(playback_button.get());
     playback_button->addListener(this);
+    playback_button->setEnabled(false);
 
     player.reset(new AudioPlayer([this](AudioPlayer::PlayerState state) {
         switch (state) {
@@ -48,6 +49,7 @@ MainComponent::MainComponent() {
                 break;
 
             case AudioPlayer::Playing:
+                playback_button->setEnabled(true);
                 playback_button->setButtonText("Pause");
                 break;
 
@@ -59,7 +61,7 @@ MainComponent::MainComponent() {
 
     addChildComponent(player.get());
 
-    setSize(600, 400);
+    setSize(700, 400);
 }
 
 MainComponent::~MainComponent() {
@@ -71,10 +73,6 @@ MainComponent::~MainComponent() {
     player = nullptr;
 }
 
-void MainComponent::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colour(0xff323e44));
-}
-
 void MainComponent::resized() {
     using GridTrackInfo = juce::Grid::TrackInfo;
     using GridFr = juce::Grid::Fr;
@@ -83,8 +81,7 @@ void MainComponent::resized() {
 
     Grid grid;
     grid.templateRows = {GridTrackInfo(GridFr(12)), GridTrackInfo(GridFr(1)),
-                         GridTrackInfo(GridFr(1)), GridTrackInfo(GridFr(2)),
-                         GridTrackInfo(GridFr(1))};
+                         GridTrackInfo(GridFr(1)), GridTrackInfo(GridFr(2))};
     for (int i = 0; i < band_number; i++) {
         grid.templateColumns.add(GridTrackInfo(GridFr(1)));
     }
@@ -98,18 +95,18 @@ void MainComponent::resized() {
         knob_label_cell.setArea(2, i, 2, i);
         grid.items.add(knob_label_cell);
     }
-
+    GridItem::Margin common_margin{5, 5, 5, 5};
     GridItem fsbutton{fileselection_button.get()};
     fsbutton.setArea(4, 1, 4, 4);
-    grid.items.add(fsbutton.withMargin(GridItem::Margin(2, 5, 2, 5)));
+    grid.items.add(fsbutton.withMargin(common_margin));
 
     GridItem ppbutton{playback_button.get()};
     ppbutton.setArea(4, 4, 4, 6);
-    grid.items.add(ppbutton.withMargin(GridItem::Margin(2, 5, 2, 5)));
+    grid.items.add(ppbutton.withMargin(common_margin));
 
     GridItem volumeslider{volume_slider.get()};
     volumeslider.setArea(4, 8, 4, 12);
-    grid.items.add(volumeslider);
+    grid.items.add(volumeslider.withMargin(common_margin));
 
     GridItem volumelabel{volume_label.get()};
     volumelabel.setArea(4, 7, 4, 8);
@@ -120,7 +117,7 @@ void MainComponent::resized() {
 
 void MainComponent::sliderValueChanged(juce::Slider *sliderThatWasMoved) {
     if (sliderThatWasMoved == volume_slider.get()) {
-    } else {
+        player->equalizer.setVolume((float) sliderThatWasMoved->getValue());
     }
 }
 
