@@ -6,6 +6,9 @@ AudioPlayer::AudioPlayer(std::function<void(PlayerState)> state_caller) : state{
     format_manager.registerBasicFormats();
     transport_source.addChangeListener(this);
     setAudioChannels(0, 2);
+    auto new_device_sestup = deviceManager.getAudioDeviceSetup();
+    new_device_sestup.bufferSize = Equalizer::fft_size;
+    deviceManager.setAudioDeviceSetup(new_device_sestup, true);
 }
 
 AudioPlayer::PlayerState AudioPlayer::getState() { return state; }
@@ -68,14 +71,10 @@ void AudioPlayer::selectFile() {
             auto *reader = format_manager.createReaderFor(file);
             if (reader != nullptr) {
                 changeState(Stopped);
-                reader_source.reset(new juce::AudioFormatReaderSource(reader, true));
-                transport_source.setSource(reader_source.get(), 0, nullptr, reader->sampleRate);
-
-                auto new_device_sestup = deviceManager.getAudioDeviceSetup();
-                new_device_sestup.bufferSize = Equalizer::fft_size;
-                deviceManager.setAudioDeviceSetup(new_device_sestup, true);
+                auto new_reader_source = std::make_unique<juce::AudioFormatReaderSource>(reader, true);
+                transport_source.setSource(new_reader_source.get(), 0, nullptr, reader->sampleRate);
+                std::swap(new_reader_source, reader_source);
                 equalizer.setup(static_cast<float>(reader->sampleRate));
-
                 changeState(Playing);
             }
         }
