@@ -47,31 +47,40 @@ class AudioPlayer : public juce::AudioAppComponent,
      */
     void selectFile();
 
-    Equalizer equalizer;
+    /**
+     * @brief Устанавливает громкость
+     *
+     * @param new_volume громкость от 0 до 1
+     */
+    void setVolumeGain(float new_level);
+
+    /**
+     * @brief Возвращает громкость плеера
+     *
+     * @return double - громкость от 0 до 1
+     */
+    float getVolumeGain() { return transport_source.getGain(); };
+
+    void updateBand(int low, int high, float gain);
 
    private:
     double playback_position = 0.0;  // Позиция в треке
-    double volume = 100.0;           // Громкость
 
     PlayerState state;  // Состояние плеера
 
+    Equalizer equalizer;
+
     juce::AudioFormatManager format_manager;  // Хранит доступные форматы аудио
 
-    juce::AudioTransportSource
-        transport_source;  // Проигрыватель аудио-буфферов
+    juce::AudioTransportSource transport_source;  // Проигрыватель аудио-буфферов
 
-    std::unique_ptr<juce::FileChooser>
-        chooser;  // Окно выбора файла, которое необходимо хранить из-за
-                  // асинхронности
+    std::unique_ptr<juce::FileChooser> chooser;  // Окно выбора файла, которое необходимо хранить из-за асинхронности
 
-    std::unique_ptr<juce::AudioFormatReaderSource>
-        reader_source;  // Считыватель аудио с файла
+    std::unique_ptr<juce::AudioFormatReaderSource> reader_source;  // Считыватель аудио с файла
 
-    std::function<void(PlayerState)>
-        state_callback;  // Хранит функцию, вызываемую при изменении состояния
+    std::function<void(PlayerState)> state_callback;  // Хранит функцию, вызываемую при изменении состояния
 
-    // Наследованные от AudioAppComponent методы работы со звуком и этим
-    // компонентом
+    // Наследованные от AudioAppComponent методы работы со звуком и этим компонентом
     void changeListenerCallback(juce::ChangeBroadcaster *source) override;
     void getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferToFill) override;
     void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;

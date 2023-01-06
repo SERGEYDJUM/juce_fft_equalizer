@@ -4,36 +4,18 @@
 class Equalizer {
    public:
     Equalizer();
-    ~Equalizer();
+    void setup(float new_sample_rate);
+    void updateBand(int low, int high, float gain);
+    void equalizeBuffer(const juce::AudioSourceChannelInfo &filledBuffer);
 
-    /**
-     * @brief Устанавливает громкость
-     *
-     * @param new_volume громкость от 0 до 100
-     */
-    void setVolume(float new_level);
-
-    /**
-     * @brief Возвращает громкость плеера
-     *
-     * @return double - громкость от 0 до 100
-     */
-    float getVolume() { return level; };
-
-    void processBuffer(const juce::AudioSourceChannelInfo &filledBuffer);
-    void prepareToPlay(int samplesPerBlockExpected, double sampleRate);
-
+    static int constexpr fft_order = 10;
+    static int constexpr fft_size = 1 << fft_order;
    private:
-    static constexpr auto fftOrder = 10;
-    static constexpr auto fftSize = 1 << fftOrder;
-    juce::dsp::FFT forwardFFT;
-    std::array<float, fftSize> fifo;
-    std::array<float, fftSize * 2> fftData;
-    size_t fifoIndex = 0;
-    bool nextFFTBlockReady = false;
-    float level = 1.0;
-    double sample_rate;
-    int samples_per_block_expected;
+    juce::dsp::FFT fft;
+    float sample_rate;
+    float fundamental_harmonic;
+    std::array<float, 25000> freq_gain;
+    std::array<float, fft_size * 2> fft_data;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Equalizer)
 };

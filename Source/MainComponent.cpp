@@ -65,12 +65,12 @@ MainComponent::MainComponent() {
 }
 
 MainComponent::~MainComponent() {
+    player = nullptr;
     volume_slider = nullptr;
     fileselection_button = nullptr;
     playback_button = nullptr;
     knobs.clear(true);
     knob_labels.clear(true);
-    player = nullptr;
 }
 
 void MainComponent::resized() {
@@ -116,8 +116,32 @@ void MainComponent::resized() {
 }
 
 void MainComponent::sliderValueChanged(juce::Slider *sliderThatWasMoved) {
+    float slider_value = static_cast<float>(sliderThatWasMoved->getValue());
+
     if (sliderThatWasMoved == volume_slider.get()) {
-        player->equalizer.setVolume((float)sliderThatWasMoved->getValue());
+        player->setVolumeGain(slider_value/100);
+    } else if (knobs[0] == sliderThatWasMoved) {
+        player->updateBand(11, 22, slider_value);
+    } else if (knobs[1] == sliderThatWasMoved) {
+        player->updateBand(23, 45, slider_value);
+    } else if (knobs[2] == sliderThatWasMoved) {
+        player->updateBand(46, 89, slider_value);
+    } else if (knobs[3] == sliderThatWasMoved) {
+        player->updateBand(90, 177, slider_value);
+    } else if (knobs[4] == sliderThatWasMoved) {
+        player->updateBand(178, 354, slider_value);
+    } else if (knobs[5] == sliderThatWasMoved) {
+        player->updateBand(355, 707, slider_value);
+    } else if (knobs[6] == sliderThatWasMoved) {
+        player->updateBand(708, 1412, slider_value);
+    } else if (knobs[7] == sliderThatWasMoved) {
+        player->updateBand(1413, 2818, slider_value);
+    } else if (knobs[8] == sliderThatWasMoved) {
+        player->updateBand(2819, 5623, slider_value);
+    } else if (knobs[9] == sliderThatWasMoved) {
+        player->updateBand(5624, 11220, slider_value);
+    } else if (knobs[10] == sliderThatWasMoved) {
+        player->updateBand(11221, 22387, slider_value);
     }
 }
 

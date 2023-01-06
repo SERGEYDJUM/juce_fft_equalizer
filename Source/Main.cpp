@@ -19,7 +19,9 @@ class fft_equalizerApplication : public juce::JUCEApplication {
         mainWindow.reset(new MainWindow(getApplicationName()));
     }
 
-    void shutdown() override { mainWindow = nullptr; }
+    void shutdown() override { 
+        mainWindow = nullptr; 
+    }
 
     void systemRequestedQuit() override { quit(); }
 

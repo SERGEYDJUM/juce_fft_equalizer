@@ -2,8 +2,7 @@
 
 #include <JuceHeader.h>
 
-AudioPlayer::AudioPlayer(std::function<void(PlayerState)> state_caller)
-    : state{Stopped}, state_callback{state_caller} {
+AudioPlayer::AudioPlayer(std::function<void(PlayerState)> state_caller) : state{Stopped}, state_callback{state_caller} {
     format_manager.registerBasicFormats();
     transport_source.addChangeListener(this);
     setAudioChannels(0, 2);
@@ -48,41 +47,49 @@ void AudioPlayer::getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferTo
         bufferToFill.clearActiveBufferRegion();
     } else {
         transport_source.getNextAudioBlock(bufferToFill);
-        equalizer.processBuffer(bufferToFill);
+        equalizer.equalizeBuffer(bufferToFill);
     }
 }
 
-void AudioPlayer::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {
-    transport_source.prepareToPlay(samplesPerBlockExpected, sampleRate);
-    equalizer.prepareToPlay(samplesPerBlockExpected, sampleRate);
-}
 
 void AudioPlayer::releaseResources() { transport_source.releaseResources(); }
 
 AudioPlayer::~AudioPlayer() {
-    releaseResources();
     reader_source = nullptr;
     chooser = nullptr;
 }
 
 void AudioPlayer::selectFile() {
-    chooser = std::make_unique<juce::FileChooser>("Select a file to play...", juce::File{}, "*.wav;*.mp3");
-    auto chooser_flags = juce::FileBrowserComponent::openMode |
-                         juce::FileBrowserComponent::canSelectFiles;
-    chooser->launchAsync(chooser_flags, [this](const juce::FileChooser &fc) {
-        auto file = fc.getResult();
+    chooser = std::make_unique<juce::FileChooser>("Select audiofile to play...", juce::File{}, "*.wav;*.mp3");
+    auto fc_flags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
+    chooser->launchAsync(fc_flags, [this](const juce::FileChooser &file_chooser) {
+        auto file = file_chooser.getResult();
         if (file != juce::File{}) {
             auto *reader = format_manager.createReaderFor(file);
             if (reader != nullptr) {
                 changeState(Stopped);
-                auto new_source =
-                    std::make_unique<juce::AudioFormatReaderSource>(reader,
-                                                                    true);
-                transport_source.setSource(new_source.get(), 0, nullptr,
-                                           reader->sampleRate);
-                reader_source.reset(new_source.release());
+                reader_source.reset(new juce::AudioFormatReaderSource(reader, true));
+                transport_source.setSource(reader_source.get(), 0, nullptr, reader->sampleRate);
+
+                auto new_device_sestup = deviceManager.getAudioDeviceSetup();
+                new_device_sestup.bufferSize = Equalizer::fft_size;
+                deviceManager.setAudioDeviceSetup(new_device_sestup, true);
+                equalizer.setup(static_cast<float>(reader->sampleRate));
+
                 changeState(Playing);
             }
         }
     });
+}
+
+void AudioPlayer::setVolumeGain(float new_level) {
+    transport_source.setGain(new_level);
+}
+
+void AudioPlayer::updateBand(int low, int high, float gain) {
+    equalizer.updateBand(low, high, gain);
+}
+
+void AudioPlayer::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {
+    transport_source.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
