@@ -21,7 +21,7 @@ class AudioPlayer : public juce::AudioAppComponent,
      * \param state_caller Функция, которая будет вызываться при изменении его
      * состояния.
      */
-    AudioPlayer(std::function<void(PlayerState)> state_caller = [](PlayerState state) { state; });
+    AudioPlayer(std::function<void(PlayerState)> state_caller, int buffer_size_order);
 
     ~AudioPlayer() override;
 
@@ -43,7 +43,6 @@ class AudioPlayer : public juce::AudioAppComponent,
      * Асинхронно запускает окно выбора аудиофайла.
      * При этом воспроизведение предыдущего останавливается только если был
      * выбран корректный файл.
-     *
      */
     void selectFile();
 

@@ -2,12 +2,14 @@
 
 #include <JuceHeader.h>
 
-AudioPlayer::AudioPlayer(std::function<void(PlayerState)> state_caller) : state{Stopped}, state_callback{state_caller} {
+AudioPlayer::AudioPlayer(std::function<void(PlayerState)> state_caller, int buffer_size_order)
+    : state{Stopped}, state_callback{state_caller}, equalizer{buffer_size_order} {
     format_manager.registerBasicFormats();
     transport_source.addChangeListener(this);
     setAudioChannels(0, 2);
+
     auto new_device_sestup = deviceManager.getAudioDeviceSetup();
-    new_device_sestup.bufferSize = Equalizer::fft_size;
+    new_device_sestup.bufferSize = 1 << buffer_size_order;
     deviceManager.setAudioDeviceSetup(new_device_sestup, true);
 }
 
@@ -74,7 +76,7 @@ void AudioPlayer::selectFile() {
                 auto new_reader_source = std::make_unique<juce::AudioFormatReaderSource>(reader, true);
                 transport_source.setSource(new_reader_source.get(), 0, nullptr, reader->sampleRate);
                 std::swap(new_reader_source, reader_source);
-                equalizer.setup(static_cast<float>(reader->sampleRate));
+                equalizer.updateSampleRate(static_cast<float>(reader->sampleRate));
                 changeState(Playing);
             }
         }

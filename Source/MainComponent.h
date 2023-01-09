@@ -3,6 +3,8 @@
 
 #include "AudioPlayer.h"
 
+static constexpr int buffer_size_order = 10;
+
 class MainComponent : public juce::Component,
                       public juce::Slider::Listener,
                       public juce::Button::Listener {

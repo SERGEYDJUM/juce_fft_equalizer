@@ -57,7 +57,7 @@ MainComponent::MainComponent() {
                 playback_button->setButtonText("Resume");
                 break;
         }
-    }));
+    }, buffer_size_order));
 
     addChildComponent(player.get());
 
@@ -95,6 +95,7 @@ void MainComponent::resized() {
         knob_label_cell.setArea(2, i, 2, i);
         grid.items.add(knob_label_cell);
     }
+
     GridItem::Margin common_margin{5, 5, 5, 5};
     GridItem fsbutton{fileselection_button.get()};
     fsbutton.setArea(4, 1, 4, 4);
