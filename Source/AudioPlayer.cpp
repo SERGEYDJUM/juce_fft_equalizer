@@ -2,8 +2,8 @@
 
 #include <JuceHeader.h>
 
-AudioPlayer::AudioPlayer(std::function<void(PlayerState)> state_caller, int buffer_size_order)
-    : state{Stopped}, state_callback{state_caller}, equalizer{buffer_size_order} {
+AudioPlayer::AudioPlayer(std::function<void(AudioPlayer*)> callback, int buffer_size_order)
+    : state{Stopped}, state_callback{callback}, equalizer{buffer_size_order} {
     format_manager.registerBasicFormats();
     transport_source.addChangeListener(this);
     setAudioChannels(0, 2);
@@ -35,7 +35,7 @@ void AudioPlayer::changeState(PlayerState new_state) {
                 transport_source.stop();
                 break;
         }
-        state_callback(state);
+        state_callback(this);
     }
 }
 
@@ -55,7 +55,6 @@ void AudioPlayer::getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferTo
         equalizer.equalizeBuffer(bufferToFill);
     }
 }
-
 
 void AudioPlayer::releaseResources() { transport_source.releaseResources(); }
 

@@ -3,30 +3,44 @@
 
 #include "AudioPlayer.h"
 
-static constexpr int buffer_size_order = 10;
-
+/// @brief Класс контента основного окна
 class MainComponent : public juce::Component,
                       public juce::Slider::Listener,
                       public juce::Button::Listener {
    public:
-    MainComponent();
-    ~MainComponent() override;
+    /**
+     * @brief Конструирует контент основного окна и создаёт плеер
+     * @param buffer_size_order указывает степень 2-ки размера аудиобуффера и блока FFT
+     */
+    MainComponent(int buffer_size_order = 10);
 
+    /// @brief Вызывается при изменении размера окна, адаптирует контент. 
     void resized() override;
 
+    /// @brief Коллбэк для всех слайдеров в окне.
+    /// @param sliderThatWasMoved слайдер, который изменился.
+    void sliderValueChanged(juce::Slider *sliderThatWasMoved) override;
+
+    /// @brief Коллбэк для всех кнопок в окне.
+    /// @param buttonThatWasClicked нажатая кнопка.
+    void buttonClicked(juce::Button *buttonThatWasClicked) override;
+
+    /// @brief Кастомный коллбэк для плеера.
+    /// @param playerWhichStateChanged этот плеер.
+    void playerStateChanged(AudioPlayer *playerWhichStateChanged);
+
+    ~MainComponent() override;
+
+    /// @brief Количество регулируемых диапазонов частот
+    static constexpr int bands_num = 11;
    private:
-    const int band_number = 11;
+    std::unique_ptr<AudioPlayer> player;
     juce::OwnedArray<juce::Slider> knobs;
     juce::OwnedArray<juce::Label> knob_labels;
     std::unique_ptr<juce::Slider> volume_slider;
-    std::unique_ptr<juce::TextButton> fileselection_button;
+    std::unique_ptr<juce::TextButton> fileselect_button;
     std::unique_ptr<juce::TextButton> playback_button;
     std::unique_ptr<juce::Label> volume_label;
-
-    std::unique_ptr<AudioPlayer> player;
-
-    void sliderValueChanged(juce::Slider *sliderThatWasMoved) override;
-    void buttonClicked(juce::Button *buttonThatWasClicked) override;
-
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

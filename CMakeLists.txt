@@ -11,10 +11,10 @@ FetchContent_Declare(JUCE
 )
 FetchContent_MakeAvailable(JUCE)
 
-juce_add_gui_app(fft_equalizer PRODUCT_NAME "FFT Equalizer")
-juce_generate_juce_header(fft_equalizer)
+juce_add_gui_app(juce_fft_equalizer PRODUCT_NAME "FFT Equalizer")
+juce_generate_juce_header(juce_fft_equalizer)
 
-target_sources(fft_equalizer 
+target_sources(juce_fft_equalizer 
     PRIVATE 
         Source/Main.cpp 
         Source/MainComponent.cpp 
@@ -22,17 +22,18 @@ target_sources(fft_equalizer
         Source/Equalizer.cpp
 )
 
-target_compile_definitions(fft_equalizer
+target_compile_definitions(juce_fft_equalizer
     PRIVATE
         JUCE_STRICT_REFCOUNTEDPOINTER=1
         JUCE_USE_MP3AUDIOFORMAT=1
         JUCE_WEB_BROWSER=0
         JUCE_USE_CURL=0
-        JUCE_APPLICATION_NAME_STRING="$<TARGET_PROPERTY:fft_equalizer,JUCE_PRODUCT_NAME>"
-        JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:fft_equalizer,JUCE_VERSION>"
+        JUCE_APPLICATION_NAME_STRING="$<TARGET_PROPERTY:juce_fft_equalizer,JUCE_PRODUCT_NAME>"
+        JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:juce_fft_equalizer,JUCE_VERSION>"
+        JUCE_DISPLAY_SPLASH_SCREEN=0
 )
 
-target_link_libraries(fft_equalizer
+target_link_libraries(juce_fft_equalizer
     PRIVATE
         juce::juce_audio_basics
         juce::juce_audio_utils

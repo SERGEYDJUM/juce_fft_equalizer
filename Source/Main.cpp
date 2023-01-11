@@ -2,31 +2,17 @@
 
 #include "MainComponent.h"
 
-class fft_equalizerApplication : public juce::JUCEApplication {
+/// @brief Cгенерирован Projucer-ом для проекта типа "GUI-приложение"
+class juce_fft_equalizer : public juce::JUCEApplication {
    public:
-    fft_equalizerApplication() {}
-
-    const juce::String getApplicationName() override {
-        return ProjectInfo::projectName;
-    }
-    const juce::String getApplicationVersion() override {
-        return ProjectInfo::versionString;
-    }
+    juce_fft_equalizer() {}
+    const juce::String getApplicationName() override { return ProjectInfo::projectName; }
+    const juce::String getApplicationVersion() override { return ProjectInfo::versionString; }
     bool moreThanOneInstanceAllowed() override { return false; }
-
-    void initialise(const juce::String &commandLine) override {
-        commandLine;
-        mainWindow.reset(new MainWindow(getApplicationName()));
-    }
-
-    void shutdown() override { 
-        mainWindow = nullptr; 
-    }
-
+    void shutdown() override { mainWindow = nullptr; }
     void systemRequestedQuit() override { quit(); }
-
-    void anotherInstanceStarted(const juce::String &commandLine) override {
-        commandLine;
+    void initialise(const juce::String &) override {
+        mainWindow.reset(new MainWindow(getApplicationName()));
     }
 
     class MainWindow : public juce::DocumentWindow {
@@ -38,16 +24,15 @@ class fft_equalizerApplication : public juce::JUCEApplication {
                       .getDefaultLookAndFeel()
                       .findColour(juce::ResizableWindow::backgroundColourId),
                   DocumentWindow::allButtons) {
-            setUsingNativeTitleBar(false);
+            setUsingNativeTitleBar(true);
             setContentOwned(new MainComponent(), true);
 
 #if JUCE_IOS || JUCE_ANDROID
             setFullScreen(true);
 #else
-            setResizable(true, true);
+            setResizable(true, false);
             centreWithSize(getWidth(), getHeight());
 #endif
-
             setVisible(true);
         }
 
@@ -61,6 +46,7 @@ class fft_equalizerApplication : public juce::JUCEApplication {
 
    private:
     std::unique_ptr<MainWindow> mainWindow;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(juce_fft_equalizer)
 };
 
-START_JUCE_APPLICATION(fft_equalizerApplication)
+START_JUCE_APPLICATION(juce_fft_equalizer)
