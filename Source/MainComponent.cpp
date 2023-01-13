@@ -54,6 +54,9 @@ MainComponent::MainComponent(int buffer_size_order) {
     player.reset(new AudioPlayer(player_callback, buffer_size_order));
     addChildComponent(player.get());
 
+    setWantsKeyboardFocus(true); 
+    addKeyListener(this);
+
     setSize(700, 400);
 }
 
@@ -164,4 +167,21 @@ void MainComponent::playerStateChanged(AudioPlayer *playerWhichStateChanged) {
             playback_button->setButtonText("Resume");
             break;
     }
+}
+
+bool MainComponent::keyPressed(const KeyPress &k, Component *) {
+    if (k.getKeyCode() == KeyPress::homeKey) {
+        for (auto &knob : knobs) {
+            knob->setValue(0);
+        }
+    } else if (k.getKeyCode() == KeyPress::rightKey) {
+        player->jumpSeconds(5);
+    } else if (k.getKeyCode() == KeyPress::leftKey) {
+        player->jumpSeconds(-5);
+    } else if (k.getKeyCode() == KeyPress::spaceKey && playback_button->isEnabled()) {
+        buttonClicked(playback_button.get());
+    } else {
+        return false;
+    }
+    return true;
 }

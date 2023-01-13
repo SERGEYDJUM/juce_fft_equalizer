@@ -27,7 +27,8 @@ void Equalizer::equalizeBuffer(const juce::AudioSourceChannelInfo& filledBuffer)
             auto harmonic = static_cast<size_t>(fundamental_harmonic * i - fundamental_harmonic / 2);
             if (harmonic >= 25000) break;
             float gain = harmonic_gain[harmonic];
-            fft[i] *= gain;
+            fft[i] *= 2*gain;
+            fft[i + block_size / 2] = 0;
         }
 
         fft.perform_inverse();

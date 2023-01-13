@@ -6,6 +6,7 @@
 /// @brief Класс контента основного окна
 class MainComponent : public juce::Component,
                       public juce::Slider::Listener,
+                      public juce::KeyListener,
                       public juce::Button::Listener {
    public:
     /**
@@ -28,6 +29,12 @@ class MainComponent : public juce::Component,
     /// @brief Кастомный коллбэк для плеера.
     /// @param playerWhichStateChanged этот плеер.
     void playerStateChanged(AudioPlayer *playerWhichStateChanged);
+
+    /// @brief Коллбэк для всех нажатий на клавиатуре.
+    /// @param k информация о нажатии.
+    /// @param c компонент, получивший сообщение о нажатии.
+    /// @return Статус обработанности события.
+    bool keyPressed(const KeyPress &k, Component *c) override;
 
     ~MainComponent() override;
 

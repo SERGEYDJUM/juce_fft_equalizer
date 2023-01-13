@@ -15,6 +15,8 @@ class FFT {
     void perform_forward() {
         _fft(fft_data);
         fft_data /= std::sqrtf((float)size);
+        // for (size_t i = size / 2; i < size; i++) fft_data[i] = 0;
+        // for (size_t i = 1; i < size / 2; i++) fft_data[i] *= 2;
     }
 
     /// @brief Производит обратное БПФ хранимого блока.

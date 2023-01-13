@@ -90,6 +90,18 @@ void AudioPlayer::updateBand(int low, int high, float gain) {
     equalizer.updateBand(low, high, gain);
 }
 
+void AudioPlayer::jumpSeconds(double seconds) {
+    if (state != Playing) return;
+    auto new_pos = transport_source.getCurrentPosition() + seconds;
+    if (new_pos < transport_source.getLengthInSeconds()) {
+        if (new_pos >= 0) {
+            transport_source.setPosition(new_pos);
+        } else {
+            transport_source.setPosition(0);
+        }
+    }
+}
+
 void AudioPlayer::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {
     transport_source.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }

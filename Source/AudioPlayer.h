@@ -56,6 +56,10 @@ class AudioPlayer : public juce::AudioAppComponent,
     /// @param gain коэффициент от -10 до +10 в децибелах
     void updateBand(int low, int high, float gain);
 
+    /// @brief Сдвигает позицию при активном проигрывании 
+    /// @param seconds изменение времени в секундах, отрицательное значения перематывают назад.
+    void jumpSeconds(double seconds);
+
     ~AudioPlayer() override;
 
    private:
