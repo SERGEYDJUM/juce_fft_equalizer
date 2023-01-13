@@ -31,5 +31,5 @@ class Equalizer {
     int block_size;
     float sample_rate;
     float fundamental_harmonic;
-    std::array<float, 25000> harmonic_gain;
+    std::array<float, 23000> harmonic_gain;
 };

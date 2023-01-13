@@ -13,7 +13,7 @@ class MainComponent : public juce::Component,
      * @brief Конструирует контент основного окна и создаёт плеер
      * @param buffer_size_order указывает степень 2-ки размера аудиобуффера и блока FFT
      */
-    MainComponent(int buffer_size_order = 10);
+    MainComponent(int buffer_size_order = 11);
 
     /// @brief Вызывается при изменении размера окна, адаптирует контент. 
     void resized() override;

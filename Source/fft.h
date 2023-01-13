@@ -11,27 +11,24 @@ class FFT {
         fft_data.resize(size);
     }
 
-    /// @brief Производит прямое БПФ хранимого блока.
-    void perform_forward() {
+    /// @brief Производит прямое преобразование Фурье хранимого блока без нормализации.
+    inline void perform_forward() {
         _fft(fft_data);
-        fft_data /= std::sqrtf((float)size);
-        // for (size_t i = size / 2; i < size; i++) fft_data[i] = 0;
-        // for (size_t i = 1; i < size / 2; i++) fft_data[i] *= 2;
     }
 
-    /// @brief Производит обратное БПФ хранимого блока.
-    void perform_inverse() {
+    /// @brief Производит обратное преобразование Фурье хранимого блока.
+    inline void perform_inverse() {
         fft_data = fft_data.apply(std::conj);
         _fft(fft_data);
         fft_data = fft_data.apply(std::conj);
-        fft_data /= std::sqrtf((float)size);
+        fft_data /= static_cast<float>(size);
     }
 
     /// @brief Загружает блок в память FFT.
     /// @param buffer одноканальный буффер размером с блок или больше.
     void read_block(float buffer[]) {
         for (int i = 0; i < size; ++i) {
-            fft_data[i] = std::complex<float>{buffer[i], 0};
+            fft_data[i] = buffer[i];
         }
     }
 
@@ -44,6 +41,9 @@ class FFT {
     }
 
     /// @brief Позволяет напрямую изменять элементы внутренней памяти FFT.
+    /// Для справки: fft[0] - DC слот, хранит сумму сэмплов блока,
+    /// fft[size/2] - слот Найквиста, хранит данные для (частота дискретизации) / 2,
+    /// для остальных fft[i] = std::conj(fft[size - i])
     /// @param index номер элемента.
     /// @return ссылка на элемент.
     inline std::complex<float>& operator[](size_t index) {
