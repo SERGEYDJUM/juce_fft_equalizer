@@ -52,7 +52,7 @@ void AudioPlayer::getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferTo
         bufferToFill.clearActiveBufferRegion();
     } else {
         transport_source.getNextAudioBlock(bufferToFill);
-        equalizer.equalizeBuffer(bufferToFill);
+        if (state == Playing) equalizer.equalizeBuffer(bufferToFill);
     }
 }
 

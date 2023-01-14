@@ -1,7 +1,6 @@
 #include "Equalizer.h"
-#include <iostream>
 
-Equalizer::Equalizer(int fft_order) : fft{fft_order}, block_size{1 << fft_order} {
+Equalizer::Equalizer(unsigned int fft_order) : fft{fft_order}, block_size{1u << fft_order} {
     harmonic_gain.fill(1.0f);
     sample_rate = 48000.0f;
 }

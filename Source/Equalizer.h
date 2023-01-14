@@ -8,7 +8,7 @@ class Equalizer {
    public:
     /// @brief Консруирует эквалайзер.
     /// @param fft_order порядок размера буффера.
-    Equalizer(int fft_order);
+    Equalizer(unsigned int fft_order);
 
 
     /// @brief Перенастраивает эквалайзер для нового аудиофайла.
@@ -28,7 +28,7 @@ class Equalizer {
 
    private:
     FFT fft;
-    int block_size;
+    unsigned int block_size;
     float sample_rate;
     float fundamental_harmonic;
     std::array<float, 23000> harmonic_gain;
