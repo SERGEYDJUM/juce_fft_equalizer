@@ -64,7 +64,7 @@ AudioPlayer::~AudioPlayer() {
 }
 
 void AudioPlayer::selectFile() {
-    chooser = std::make_unique<juce::FileChooser>("Select audiofile to play...", juce::File{}, "*.wav;*.mp3");
+    chooser = std::make_unique<juce::FileChooser>("Select audiofile to play...", juce::File{}, "*.wav;*.mp3;*.flac");
     auto fc_flags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
     chooser->launchAsync(fc_flags, [this](const juce::FileChooser &file_chooser) {
         auto file = file_chooser.getResult();
