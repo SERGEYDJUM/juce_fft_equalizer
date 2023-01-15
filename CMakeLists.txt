@@ -11,6 +11,8 @@ FetchContent_Declare(JUCE
 )
 FetchContent_MakeAvailable(JUCE)
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DFFT_DATA_LOGGING")
+
 juce_add_gui_app(juce_fft_equalizer PRODUCT_NAME "FFT Equalizer")
 juce_generate_juce_header(juce_fft_equalizer)
 

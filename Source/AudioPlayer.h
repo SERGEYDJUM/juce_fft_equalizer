@@ -62,12 +62,18 @@ class AudioPlayer : public juce::AudioAppComponent,
 
     ~AudioPlayer() override;
 
+#ifdef FFT_DATA_LOGGING
+    /// @brief Указывает эквалайзеру записать результат FFT следующего аудиобуффера на диск.
+    void logNextBlock() {
+        equalizer.log_next_block = true;
+    }
+#endif
+
    private:
     /// @brief Позиция в треке
     double playback_position = 0.0;
     PlayerState state; 
     Equalizer equalizer;
-    
     juce::AudioFormatManager format_manager;
     juce::AudioTransportSource transport_source;
     std::unique_ptr<juce::FileChooser> chooser;

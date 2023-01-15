@@ -54,7 +54,7 @@ MainComponent::MainComponent(int buffer_size_order) {
     player.reset(new AudioPlayer(player_callback, buffer_size_order));
     addChildComponent(player.get());
 
-    setWantsKeyboardFocus(true); 
+    setWantsKeyboardFocus(true);
     addKeyListener(this);
 
     setSize(700, 400);
@@ -116,7 +116,7 @@ void MainComponent::sliderValueChanged(juce::Slider *sliderThatWasMoved) {
     if (sliderThatWasMoved == volume_slider.get()) {
         player->setVolumeGain(slider_value / 100);
     } else if (knobs[0] == sliderThatWasMoved) {
-        player->updateBand(11, 22, slider_value);
+        player->updateBand(0, 22, slider_value);
     } else if (knobs[1] == sliderThatWasMoved) {
         player->updateBand(23, 45, slider_value);
     } else if (knobs[2] == sliderThatWasMoved) {
@@ -180,7 +180,15 @@ bool MainComponent::keyPressed(const KeyPress &k, Component *) {
         player->jumpSeconds(-5);
     } else if (k.getKeyCode() == KeyPress::spaceKey && playback_button->isEnabled()) {
         buttonClicked(playback_button.get());
-    } else {
+    }
+    
+#ifdef FFT_DATA_LOGGING
+    else if (k.getTextCharacter() == 'l') {
+        player->logNextBlock();
+    }
+#endif
+
+    else {
         return false;
     }
     return true;

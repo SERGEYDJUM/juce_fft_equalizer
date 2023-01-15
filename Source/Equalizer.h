@@ -1,6 +1,5 @@
 #pragma once
 #include <JuceHeader.h>
-
 #include "fft.h"
 
 /// @brief Класс FFT-эквалайзера.
@@ -25,6 +24,11 @@ class Equalizer {
     /// @brief Обрабатывает очередной аудиобуффер. 
     /// @param filledBuffer буффер с любым количеством каналов.
     void equalizeBuffer(const juce::AudioSourceChannelInfo &filledBuffer);
+
+#ifdef FFT_DATA_LOGGING
+    bool log_next_block = false;
+    size_t log_file_index = 0;
+#endif
 
    private:
     FFT fft;
