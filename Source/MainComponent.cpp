@@ -116,7 +116,7 @@ void MainComponent::sliderValueChanged(juce::Slider *sliderThatWasMoved) {
     if (sliderThatWasMoved == volume_slider.get()) {
         player->setVolumeGain(slider_value / 100);
     } else if (knobs[0] == sliderThatWasMoved) {
-        player->updateBand(0, 22, slider_value);
+        player->updateBand(11, 22, slider_value);
     } else if (knobs[1] == sliderThatWasMoved) {
         player->updateBand(23, 45, slider_value);
     } else if (knobs[2] == sliderThatWasMoved) {
@@ -183,7 +183,7 @@ bool MainComponent::keyPressed(const KeyPress &k, Component *) {
     }
     
 #ifdef FFT_DATA_LOGGING
-    else if (k.getTextCharacter() == 'l') {
+    else if (k.getKeyCode() == KeyPress::downKey) {
         player->logNextBlock();
     }
 #endif
