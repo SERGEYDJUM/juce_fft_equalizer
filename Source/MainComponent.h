@@ -41,16 +41,28 @@ class MainComponent : public Component,
     ~MainComponent() override;
 
    private:
-    // Количество регулируемых диапазонов частот (полос)
+    /// @brief Количество регулируемых диапазонов частот (полос)
     static constexpr unsigned int bands_num = 11;
 
+    /// @brief Плеер со встроенным эквалайзером
     std::unique_ptr<AudioPlayer> player;
-    // Слайдеры, отвечающие за полосы
+
+    /// @brief Слайдеры, отвечающие за полосы
     OwnedArray<Slider> knobs;
+
+    /// @brief Надписи герцовок под слайдерами
     OwnedArray<Label> knob_labels;
+
+    /// @brief Регулятор громкости
     std::unique_ptr<Slider> volume_slider;
+
+    /// @brief Кнопка, открывающая окно выбора файла
     std::unique_ptr<TextButton> fileselect_button;
+
+    /// @brief Кнопка паузы с меняющимся текстом
     std::unique_ptr<TextButton> playback_button;
+
+    /// @brief Надпись "Громкость"
     std::unique_ptr<Label> volume_label;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)

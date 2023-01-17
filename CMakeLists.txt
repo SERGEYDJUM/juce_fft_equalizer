@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
 project(juce_fft_equalizer VERSION 1.0.0)
 
+set(JUCE_FFT_EQUALIZER_SOURCES ${PROJECT_SOURCE_DIR}/Source)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DFFT_DATA_LOGGING")
+
 include(FetchContent)
 set(FETCHCONTENT_QUIET FALSE)
 FetchContent_Declare(JUCE
@@ -11,17 +14,16 @@ FetchContent_Declare(JUCE
 )
 FetchContent_MakeAvailable(JUCE)
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DFFT_DATA_LOGGING")
-
 juce_add_gui_app(juce_fft_equalizer PRODUCT_NAME "FFT Equalizer")
 juce_generate_juce_header(juce_fft_equalizer)
 
 target_sources(juce_fft_equalizer 
     PRIVATE 
-        Source/Main.cpp
-        Source/MainComponent.cpp 
-        Source/AudioPlayer.cpp
-        Source/Equalizer.cpp
+        ${JUCE_FFT_EQUALIZER_SOURCES}/Main.cpp
+        ${JUCE_FFT_EQUALIZER_SOURCES}/MainComponent.cpp 
+        ${JUCE_FFT_EQUALIZER_SOURCES}/AudioPlayer.cpp
+        ${JUCE_FFT_EQUALIZER_SOURCES}/Equalizer.cpp
+        ${JUCE_FFT_EQUALIZER_SOURCES}/fft.h
 )
 
 target_compile_definitions(juce_fft_equalizer
@@ -44,3 +46,13 @@ target_link_libraries(juce_fft_equalizer
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags
 )
+
+
+find_package(Doxygen)
+if (DOXYGEN_FOUND)
+    set(DOXYGEN_GENERATE_HTML YES)
+    # Если нужны приватные члены, то используйте Debug
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDOXYGEN_EXTRACT_PRIVATE")
+    set(DOXYGEN_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/docs)
+    doxygen_add_docs(docs ${JUCE_FFT_EQUALIZER_SOURCES})
+endif()

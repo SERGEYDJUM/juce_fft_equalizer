@@ -2,7 +2,8 @@
 
 #include "MainComponent.h"
 
-/// @brief Cгенерирован Projucer-ом для проекта типа "GUI-приложение"
+/// @brief Основной класс приложения, сгенерирован Projucer-ом для проекта типа
+/// "GUI-приложение", инстанциируется JUCE-ом.
 class juce_fft_equalizer : public JUCEApplication {
    public:
     juce_fft_equalizer() {}
@@ -24,9 +25,8 @@ class juce_fft_equalizer : public JUCEApplication {
         MainWindow(String name)
             : DocumentWindow(
                   name,
-                  Desktop::getInstance()
-                      .getDefaultLookAndFeel()
-                      .findColour(ResizableWindow::backgroundColourId),
+                  Desktop::getInstance().getDefaultLookAndFeel().findColour(
+                      ResizableWindow::backgroundColourId),
                   DocumentWindow::allButtons) {
             setUsingNativeTitleBar(true);
             setContentOwned(new MainComponent(), true);

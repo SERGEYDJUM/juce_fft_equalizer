@@ -3,10 +3,11 @@
 
 #include "Equalizer.h"
 
-/// @brief Воспроизводит аудиофайлы форматов wav, mp3 и flac.
+/// @brief Воспроизводит аудиофайлы форматов wav, mp3, flac и может быть
+/// каких-то ещё
 class AudioPlayer : public AudioAppComponent, public ChangeListener {
    public:
-    /// @brief Набор состояний, в которых может находиться плееер.
+    /// @brief Набор состояний, в которых может находиться плееер
     enum PlayerState { Stopped, Playing, Paused };
 
     /**
@@ -38,7 +39,7 @@ class AudioPlayer : public AudioAppComponent, public ChangeListener {
 
     /**
      * @brief Устанавливает громкость.
-     * @param new_volume громкость от 0 до 1.
+     * @param new_level громкость от 0 до 1.
      */
     void setVolumeGain(float new_level);
 
@@ -62,25 +63,52 @@ class AudioPlayer : public AudioAppComponent, public ChangeListener {
 
 #ifdef FFT_DATA_LOGGING
     /// @brief Указывает эквалайзеру записать результат FFT следующего
-    /// аудиобуффера на диск.
+    /// аудиобуфера на диск.
     void logNextBlock() { equalizer.log_next_block = true; }
 #endif
 
    private:
+    /// @brief Состояние плеера
     PlayerState state;
+
+    /// @brief Позиция проигрывания
     double playback_position = 0.0;
+
+    /// @brief Встроенный эквалайзер
     Equalizer equalizer;
+
+    /// @brief Управляет списком поддерживаемых форматов и определяет какой
+    /// использовать для аудиофайла
     AudioFormatManager format_manager;
+
+    /// @brief Воспроизводит аудиобуферы
     AudioTransportSource transport_source;
+
+    /// @brief Хранит окно выбора файлов, необходимо в силу асинхронности
     std::unique_ptr<FileChooser> chooser;
+
+    /// @brief Читает данные из аудиофайла
     std::unique_ptr<AudioFormatReaderSource> reader_source;
+
+    /// @brief Хранит коллбэк, вызываемый при изменении состояния
     std::function<void(AudioPlayer *)> state_callback;
 
-    // Наследованные от AudioAppComponent методы работы со звуком и этим
-    // компонентом
+    /// @brief Вызывается при изменении состояния AudioTransportSource,
+    /// используется для обработки остановки трека.
+    /// @param source вызвавший коллбэк.
     void changeListenerCallback(ChangeBroadcaster *source) override;
+
+    /// @brief Обработчик очередного буфера с аудио.
+    /// @param bufferToFill принятый многоканальный буфер.
     void getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill) override;
+
+    /// @brief Вызывается для подготовки AudioTransportSource к воспроизведения
+    /// нового файла.
+    /// @param samplesPerBlockExpected ожидаемый размер блока.
+    /// @param sampleRate частота дискретизации.
     void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
+
+    /// @brief Освобождает ресурсы AudioTransportSource.
     void releaseResources() override;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPlayer)

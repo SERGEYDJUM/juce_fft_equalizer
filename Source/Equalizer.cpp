@@ -6,6 +6,7 @@
 
 Equalizer::Equalizer(unsigned int fft_order)
     : fft{fft_order},
+      //   fft_gains{10},
       block_size{1u << fft_order},
       sample_rate{0},
       base_freq{0} {
@@ -46,10 +47,25 @@ void Equalizer::_generate_harmonic_gain() {
         }
     }
 
+    // // Мои попытки сгладить коэффициенты
+    // for (unsigned int j = 0; j < 20; j++) {
+    //     fft_gains.read_block(harmonic_gain.data(), 1024*j);
+    //     fft_gains.perform_forward();
+    //     for (size_t i = 16; i < 512; i++) {
+    //         fft_gains[1024 - i] = 0;
+    //         fft_gains[i] = 0;
+    //     }
+    //     fft_gains.perform_inverse();
+    //     fft_gains.write_block(harmonic_gain.data(), 1024*j);
+    // }
+
+    // for (size_t i = 0; i < harmonic_gain.size(); i++)
+    //     if (harmonic_gain[i] < 0) harmonic_gain[i] = 0;
+
 #ifdef FFT_DATA_LOGGING
     std::ofstream band_data_log;
     band_data_log.open("last_band_data.csv");
-    band_data_log << "harmonic,gain" << std::endl;
+    band_data_log << "frequency,gain" << std::endl;
     for (int i = 0; i < harmonic_gain.size(); i++) {
         band_data_log << i << ',' << harmonic_gain[i] << std::endl;
     }
@@ -86,11 +102,10 @@ void Equalizer::equalizeBuffer(const AudioSourceChannelInfo& filledBuffer) {
 #ifdef FFT_DATA_LOGGING
         if (log_next_block) {
             std::ofstream eq_data_log;
-            eq_data_log.open("fft_log_" + std::to_string(log_file_index) +
-                             ".csv");
+            eq_data_log.open("fft_audio_latest.csv");
             eq_data_log << "#sample_rate=" << sample_rate
                         << ", fft_size=" << block_size << std::endl;
-            eq_data_log << "freq,magnitude,phase" << std::endl;
+            eq_data_log << "frequency,magnitude,phase" << std::endl;
             eq_data_log << "0," + std::to_string(fft[0].real()) + ",0.0"
                         << std::endl;
 
@@ -109,7 +124,6 @@ void Equalizer::equalizeBuffer(const AudioSourceChannelInfo& filledBuffer) {
             eq_data_log.flush();
             eq_data_log.close();
             log_next_block = false;
-            ++log_file_index;
         }
 #endif
         fft.perform_inverse();
