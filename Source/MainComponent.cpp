@@ -159,7 +159,7 @@ void MainComponent::playerStateChanged(AudioPlayer *playerWhichStateChanged) {
 bool MainComponent::keyPressed(const KeyPress &k, Component *) {
     if (k.getKeyCode() == KeyPress::homeKey) {
         for (auto &knob : knobs) {
-            knob->setValue(0);
+            knob->setValue(1);
         }
     } else if (k.getKeyCode() == KeyPress::rightKey) {
         player->jumpSeconds(5);

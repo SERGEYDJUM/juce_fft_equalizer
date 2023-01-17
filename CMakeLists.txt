@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(juce_fft_equalizer VERSION 0.0.1)
+project(juce_fft_equalizer VERSION 1.0.0)
 
 include(FetchContent)
 set(FETCHCONTENT_QUIET FALSE)
