@@ -2,7 +2,8 @@
 #include <complex>
 #include <valarray>
 
-/// @brief Класс, реализующий алгоритмы прямого и обратного Быстрого Преобразования Фурье.
+/// @brief Класс, реализующий алгоритмы прямого и обратного Быстрого
+/// Преобразования Фурье.
 class FFT {
    public:
     /// @brief Конструирует FFT с заданным размером.
@@ -15,10 +16,9 @@ class FFT {
         }
     }
 
-    /// @brief Производит прямое преобразование Фурье хранимого блока без нормализации.
-    inline void perform_forward() {
-        _fft();
-    }
+    /// @brief Производит прямое преобразование Фурье хранимого блока без
+    /// нормализации.
+    inline void perform_forward() { _fft(); }
 
     /// @brief Производит обратное преобразование Фурье хранимого блока.
     inline void perform_inverse() {
@@ -46,8 +46,8 @@ class FFT {
 
     /// @brief Позволяет напрямую изменять элементы внутренней памяти FFT.
     /// Для справки: fft[0] - DC слот, хранит сумму сэмплов блока,
-    /// fft[size/2] - слот Найквиста, хранит данные для (частота дискретизации) / 2,
-    /// для остальных fft[i] = std::conj(fft[size - i])
+    /// fft[size/2] - слот Найквиста, хранит данные для (частота дискретизации)
+    /// / 2, для остальных fft[i] = std::conj(fft[size - i])
     /// @param index номер элемента.
     /// @return ссылка на элемент.
     inline std::complex<float>& operator[](size_t index) {
@@ -61,16 +61,17 @@ class FFT {
     //     unsigned int _size = inp_arr.size();
     //     if (_size <= 1) return;
 
-    //     std::valarray<std::complex<float>> even = inp_arr[std::slice(0, _size / 2, 2)];
-    //     std::valarray<std::complex<float>> odd = inp_arr[std::slice(1, _size / 2, 2)];
+    //     std::valarray<std::complex<float>> even = inp_arr[std::slice(0, _size
+    //     / 2, 2)]; std::valarray<std::complex<float>> odd =
+    //     inp_arr[std::slice(1, _size / 2, 2)];
 
     //     _fft(even);
     //     _fft(odd);
 
     //     for (unsigned int i = 0; i < _size / 2; ++i) {
-    //         auto t = std::polar(1.0f, -6.283185307179586f * i / _size) * odd[i];
-    //         inp_arr[i] = even[i] + t;
-    //         inp_arr[i + _size / 2] = even[i] - t;
+    //         auto t = std::polar(1.0f, -6.283185307179586f * i / _size) *
+    //         odd[i]; inp_arr[i] = even[i] + t; inp_arr[i + _size / 2] =
+    //         even[i] - t;
     //     }
     // }
 

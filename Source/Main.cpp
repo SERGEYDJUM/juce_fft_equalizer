@@ -3,26 +3,30 @@
 #include "MainComponent.h"
 
 /// @brief Cгенерирован Projucer-ом для проекта типа "GUI-приложение"
-class juce_fft_equalizer : public juce::JUCEApplication {
+class juce_fft_equalizer : public JUCEApplication {
    public:
     juce_fft_equalizer() {}
-    const juce::String getApplicationName() override { return ProjectInfo::projectName; }
-    const juce::String getApplicationVersion() override { return ProjectInfo::versionString; }
+    const String getApplicationName() override {
+        return ProjectInfo::projectName;
+    }
+    const String getApplicationVersion() override {
+        return ProjectInfo::versionString;
+    }
     bool moreThanOneInstanceAllowed() override { return false; }
     void shutdown() override { mainWindow = nullptr; }
     void systemRequestedQuit() override { quit(); }
-    void initialise(const juce::String &) override {
+    void initialise(const String &) override {
         mainWindow.reset(new MainWindow(getApplicationName()));
     }
 
-    class MainWindow : public juce::DocumentWindow {
+    class MainWindow : public DocumentWindow {
        public:
-        MainWindow(juce::String name)
+        MainWindow(String name)
             : DocumentWindow(
                   name,
-                  juce::Desktop::getInstance()
+                  Desktop::getInstance()
                       .getDefaultLookAndFeel()
-                      .findColour(juce::ResizableWindow::backgroundColourId),
+                      .findColour(ResizableWindow::backgroundColourId),
                   DocumentWindow::allButtons) {
             setUsingNativeTitleBar(true);
             setContentOwned(new MainComponent(), true);

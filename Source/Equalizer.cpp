@@ -4,19 +4,46 @@
 #include <fstream>
 #endif
 
-Equalizer::Equalizer(unsigned int fft_order) 
-    : fft{fft_order}, block_size{1u << fft_order}, sample_rate{0}, fundamental_harmonic{0} {
+Equalizer::Equalizer(unsigned int fft_order)
+    : fft{fft_order},
+      block_size{1u << fft_order},
+      sample_rate{0},
+      base_freq{0} {
     harmonic_gain.fill(1.0f);
+
+    // Данные взяты из ISO 266
+    unsigned int band_centers[] = {16,   31,   63,   125,  250,  500,
+                                   1000, 2000, 4000, 8000, 16000};
+    unsigned band_len = 11;
+    for (size_t i = 0; i < 11; i++) {
+        unsigned int left = band_centers[i] - band_len / 2;
+        unsigned int right = band_centers[i] + band_len / 2;
+        bands[i] = Band{band_centers[i], left, right, 1.0f};
+        band_len *= 2;
+    }
 }
 
 void Equalizer::updateSampleRate(float new_sample_rate) {
     sample_rate = new_sample_rate;
-    fundamental_harmonic = sample_rate / block_size + 2;
+    base_freq = sample_rate / block_size;
+
+    // Я не знаю, почему так вышло, но так надо, чтобы частоты
+    // более-менее правильно определялись
+    base_freq += 2;
 }
 
-void Equalizer::updateBand(int low, int high, float gain) {
-    for (int i = low; i <= high; i++) {
-        harmonic_gain[i] = 1.0f + gain / 10.0f;
+void Equalizer::updateBand(unsigned int band, float gain) {
+    bands[band].gain = gain;
+    _generate_harmonic_gain();
+}
+
+void Equalizer::_generate_harmonic_gain() {
+    for (size_t i = 0; i < 11; i++) {
+        if (harmonic_gain[bands[i].center] != bands[i].gain) {
+            for (unsigned int j = bands[i].left; j < bands[i].right; j++) {
+                harmonic_gain[j] = bands[i].gain;
+            }
+        }
     }
 
 #ifdef FFT_DATA_LOGGING
@@ -31,38 +58,51 @@ void Equalizer::updateBand(int low, int high, float gain) {
 #endif
 }
 
-void Equalizer::equalizeBuffer(const juce::AudioSourceChannelInfo& filledBuffer) {
-    for (auto channel = 0; channel < filledBuffer.buffer->getNumChannels(); ++channel) {
-        auto* buffer = filledBuffer.buffer->getWritePointer(channel, filledBuffer.startSample);
+void Equalizer::equalizeBuffer(const AudioSourceChannelInfo& filledBuffer) {
+    auto channels = filledBuffer.buffer->getNumChannels();
+    for (auto channel = 0; channel < channels; ++channel) {
+        auto* buffer = filledBuffer.buffer->getWritePointer(
+            channel, filledBuffer.startSample);
         fft.read_block(buffer);
         fft.perform_forward();
 
         for (size_t i = 1; i < block_size / 2; ++i) {
-            auto harmonic = static_cast<size_t>(fundamental_harmonic * i - fundamental_harmonic / 2);
-            if (harmonic >= 23000) break;
+            // Частота i-го слота FFT
+            auto freq = static_cast<size_t>(base_freq * i - base_freq / 2);
+
+            // Никто не услышит, да и полосы там не определены
+            if (freq >= 23000) break;
+
             float real = fft[i].real();
             float imag = fft[i].imag();
             float magnitude = sqrtf(real * real + imag * imag);
             float phase = atan2(imag, real);
-            fft[i] = std::polar(magnitude * harmonic_gain[harmonic], phase);
+            fft[i] = std::polar(magnitude * harmonic_gain[freq], phase);
+
+            // Вторая половина блока - это комплексно сопряженные числа
             fft[block_size - i] = std::conj(fft[i]);
         }
 
 #ifdef FFT_DATA_LOGGING
         if (log_next_block) {
             std::ofstream eq_data_log;
-            eq_data_log.open("fft_log_" + std::to_string(log_file_index) + ".csv");
-            eq_data_log << "#sample_rate=" << sample_rate << ", fft_size=" << block_size << std::endl;
-            eq_data_log << "harmonic,magnitude,phase" << std::endl;
-            eq_data_log << "0," + std::to_string(fft[0].real()) + ",0.0" << std::endl;
+            eq_data_log.open("fft_log_" + std::to_string(log_file_index) +
+                             ".csv");
+            eq_data_log << "#sample_rate=" << sample_rate
+                        << ", fft_size=" << block_size << std::endl;
+            eq_data_log << "freq,magnitude,phase" << std::endl;
+            eq_data_log << "0," + std::to_string(fft[0].real()) + ",0.0"
+                        << std::endl;
 
             for (size_t i = 1; i <= block_size / 2; ++i) {
-                auto harmonic = static_cast<size_t>(fundamental_harmonic * i - fundamental_harmonic / 2);
+                auto harmonic =
+                    static_cast<size_t>(base_freq * i - base_freq / 2);
                 float real = fft[i].real();
                 float imag = fft[i].imag();
-                eq_data_log << std::to_string(harmonic) + ',' 
-                    + std::to_string(sqrtf(real * real + imag * imag)) 
-                    + ',' + std::to_string(atan2(imag, real)) 
+                eq_data_log
+                    << std::to_string(harmonic) + ',' +
+                           std::to_string(sqrtf(real * real + imag * imag)) +
+                           ',' + std::to_string(atan2(imag, real))
                     << std::endl;
             }
 

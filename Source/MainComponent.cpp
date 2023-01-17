@@ -1,56 +1,58 @@
 #include "MainComponent.h"
 
-MainComponent::MainComponent(int buffer_size_order) {
+MainComponent::MainComponent(unsigned int buffer_size_order) {
     for (int i = 0; i < bands_num; ++i) {
-        knobs.add(new juce::Slider);
+        knobs.add(new Slider);
         auto &knob = *knobs.getLast();
-        knob.setSliderStyle(juce::Slider::LinearBarVertical);
+        knob.setSliderStyle(Slider::LinearBarVertical);
         knob.setTextBoxIsEditable(false);
-        knob.setRange(-10, 10, 0.1);
+        knob.setRange(0, 2, 0.05);
+        knob.setValue(1, NotificationType::dontSendNotification);
         knob.addListener(this);
         addAndMakeVisible(knob);
 
-        knob_labels.add(new juce::Label);
+        knob_labels.add(new Label);
         auto &label = *knob_labels.getLast();
         label.setEditable(false, false, false);
-        label.setJustificationType(juce::Justification::centred);
+        label.setJustificationType(Justification::centred);
         addAndMakeVisible(label);
     }
 
     int band_central_harmonic = 16000;
     for (int i = bands_num - 1; i >= 0; --i) {
-        knob_labels[i]->setText(
-            std::to_string(band_central_harmonic) + " Hz",
-            NotificationType::dontSendNotification);
+        knob_labels[i]->setText(std::to_string(band_central_harmonic) + " Hz",
+                                NotificationType::dontSendNotification);
         band_central_harmonic /= 2;
     }
 
-    volume_slider.reset(new juce::Slider);
+    volume_slider.reset(new Slider);
     volume_slider->setRange(0, 100, 1);
     volume_slider->setValue(100);
-    volume_slider->setSliderStyle(juce::Slider::LinearHorizontal);
-    volume_slider->setTextBoxStyle(juce::Slider::NoTextBox, true, -1, -1);
+    volume_slider->setSliderStyle(Slider::LinearHorizontal);
+    volume_slider->setTextBoxStyle(Slider::NoTextBox, true, -1, -1);
     volume_slider->addListener(this);
     addAndMakeVisible(volume_slider.get());
 
-    volume_label.reset(new juce::Label);
+    volume_label.reset(new Label);
     volume_label->setText("Volume", NotificationType::dontSendNotification);
     volume_label->setEditable(false, false, false);
-    volume_label->setJustificationType(juce::Justification::centred);
+    volume_label->setJustificationType(Justification::centred);
     addAndMakeVisible(volume_label.get());
 
-    fileselect_button.reset(new juce::TextButton);
+    fileselect_button.reset(new TextButton);
     fileselect_button->setButtonText("Select File");
     fileselect_button->addListener(this);
     addAndMakeVisible(fileselect_button.get());
 
-    playback_button.reset(new juce::TextButton);
+    playback_button.reset(new TextButton);
     playback_button->setButtonText("Play");
     playback_button->setEnabled(false);
     playback_button->addListener(this);
     addAndMakeVisible(playback_button.get());
 
-    auto player_callback = [this](AudioPlayer *plr) { playerStateChanged(plr); };
+    auto player_callback = [this](AudioPlayer *plr) {
+        playerStateChanged(plr);
+    };
     player.reset(new AudioPlayer(player_callback, buffer_size_order));
     addChildComponent(player.get());
 
@@ -70,12 +72,13 @@ MainComponent::~MainComponent() {
 }
 
 void MainComponent::resized() {
-    using Track = juce::Grid::TrackInfo;
-    using Fr = juce::Grid::Fr;
-    using Item = juce::GridItem;
+    using Track = Grid::TrackInfo;
+    using Fr = Grid::Fr;
+    using Item = GridItem;
 
-    juce::Grid grid;
-    grid.templateRows = {Track(Fr(12)), Track(Fr(1)), Track(Fr(1)), Track(Fr(2))};
+    Grid grid;
+    grid.templateRows = {Track(Fr(12)), Track(Fr(1)), Track(Fr(1)),
+                         Track(Fr(2))};
     for (int i = 0; i < bands_num; ++i) {
         grid.templateColumns.add(Track(Fr(1)));
     }
@@ -110,37 +113,21 @@ void MainComponent::resized() {
     grid.performLayout(getLocalBounds());
 }
 
-void MainComponent::sliderValueChanged(juce::Slider *sliderThatWasMoved) {
+void MainComponent::sliderValueChanged(Slider *sliderThatWasMoved) {
     float slider_value = static_cast<float>(sliderThatWasMoved->getValue());
-
     if (sliderThatWasMoved == volume_slider.get()) {
         player->setVolumeGain(slider_value / 100);
-    } else if (knobs[0] == sliderThatWasMoved) {
-        player->updateBand(11, 22, slider_value);
-    } else if (knobs[1] == sliderThatWasMoved) {
-        player->updateBand(23, 45, slider_value);
-    } else if (knobs[2] == sliderThatWasMoved) {
-        player->updateBand(46, 89, slider_value);
-    } else if (knobs[3] == sliderThatWasMoved) {
-        player->updateBand(90, 177, slider_value);
-    } else if (knobs[4] == sliderThatWasMoved) {
-        player->updateBand(178, 354, slider_value);
-    } else if (knobs[5] == sliderThatWasMoved) {
-        player->updateBand(355, 707, slider_value);
-    } else if (knobs[6] == sliderThatWasMoved) {
-        player->updateBand(708, 1412, slider_value);
-    } else if (knobs[7] == sliderThatWasMoved) {
-        player->updateBand(1413, 2818, slider_value);
-    } else if (knobs[8] == sliderThatWasMoved) {
-        player->updateBand(2819, 5623, slider_value);
-    } else if (knobs[9] == sliderThatWasMoved) {
-        player->updateBand(5624, 11220, slider_value);
-    } else if (knobs[10] == sliderThatWasMoved) {
-        player->updateBand(11221, 22387, slider_value);
+    } else {
+        for (unsigned int i = 0; i < bands_num; i++) {
+            if (knobs[i] == sliderThatWasMoved) {
+                player->updateEqualizerBand(i, slider_value);
+                break;
+            }
+        }
     }
 }
 
-void MainComponent::buttonClicked(juce::Button *buttonThatWasClicked) {
+void MainComponent::buttonClicked(Button *buttonThatWasClicked) {
     if (buttonThatWasClicked == fileselect_button.get()) {
         player->selectFile();
     } else if (buttonThatWasClicked == playback_button.get()) {
@@ -178,10 +165,10 @@ bool MainComponent::keyPressed(const KeyPress &k, Component *) {
         player->jumpSeconds(5);
     } else if (k.getKeyCode() == KeyPress::leftKey) {
         player->jumpSeconds(-5);
-    } else if (k.getKeyCode() == KeyPress::spaceKey && playback_button->isEnabled()) {
+    } else if (k.getKeyCode() == KeyPress::spaceKey &&
+               playback_button->isEnabled()) {
         buttonClicked(playback_button.get());
     }
-    
 #ifdef FFT_DATA_LOGGING
     else if (k.getKeyCode() == KeyPress::downKey) {
         player->logNextBlock();

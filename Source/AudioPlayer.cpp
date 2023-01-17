@@ -2,7 +2,8 @@
 
 #include <JuceHeader.h>
 
-AudioPlayer::AudioPlayer(std::function<void(AudioPlayer*)> callback, int buffer_size_order)
+AudioPlayer::AudioPlayer(std::function<void(AudioPlayer *)> callback,
+                         unsigned int buffer_size_order)
     : state{Stopped}, state_callback{callback}, equalizer{buffer_size_order} {
     format_manager.registerBasicFormats();
     transport_source.addChangeListener(this);
@@ -39,7 +40,7 @@ void AudioPlayer::changeState(PlayerState new_state) {
     }
 }
 
-void AudioPlayer::changeListenerCallback(juce::ChangeBroadcaster *source) {
+void AudioPlayer::changeListenerCallback(ChangeBroadcaster *source) {
     if (source == &transport_source) {
         if (!transport_source.isPlaying() &&
             transport_source.hasStreamFinished())
@@ -47,7 +48,8 @@ void AudioPlayer::changeListenerCallback(juce::ChangeBroadcaster *source) {
     }
 }
 
-void AudioPlayer::getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferToFill) {
+void AudioPlayer::getNextAudioBlock(
+    const AudioSourceChannelInfo &bufferToFill) {
     if (reader_source.get() == nullptr) {
         bufferToFill.clearActiveBufferRegion();
     } else {
@@ -64,18 +66,23 @@ AudioPlayer::~AudioPlayer() {
 }
 
 void AudioPlayer::selectFile() {
-    chooser = std::make_unique<juce::FileChooser>("Select audiofile to play...", juce::File{}, "*.wav;*.mp3;*.flac");
-    auto fc_flags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
-    chooser->launchAsync(fc_flags, [this](const juce::FileChooser &file_chooser) {
+    chooser = std::make_unique<FileChooser>("Select audiofile to play...",
+                                            File{}, "*.wav;*.mp3;*.flac");
+    auto fc_flags =
+        FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
+    chooser->launchAsync(fc_flags, [this](const FileChooser &file_chooser) {
         auto file = file_chooser.getResult();
-        if (file != juce::File{}) {
+        if (file != File{}) {
             auto *reader = format_manager.createReaderFor(file);
             if (reader != nullptr) {
                 changeState(Stopped);
-                auto new_reader_source = std::make_unique<juce::AudioFormatReaderSource>(reader, true);
-                transport_source.setSource(new_reader_source.get(), 0, nullptr, reader->sampleRate);
+                auto new_reader_source =
+                    std::make_unique<AudioFormatReaderSource>(reader, true);
+                transport_source.setSource(new_reader_source.get(), 0, nullptr,
+                                           reader->sampleRate);
                 std::swap(new_reader_source, reader_source);
-                equalizer.updateSampleRate(static_cast<float>(reader->sampleRate));
+                equalizer.updateSampleRate(
+                    static_cast<float>(reader->sampleRate));
                 changeState(Playing);
             }
         }
@@ -86,8 +93,8 @@ void AudioPlayer::setVolumeGain(float new_level) {
     transport_source.setGain(new_level);
 }
 
-void AudioPlayer::updateBand(int low, int high, float gain) {
-    equalizer.updateBand(low, high, gain);
+void AudioPlayer::updateEqualizerBand(unsigned int band, float gain) {
+    equalizer.updateBand(band, gain);
 }
 
 void AudioPlayer::jumpSeconds(double seconds) {
@@ -102,6 +109,7 @@ void AudioPlayer::jumpSeconds(double seconds) {
     }
 }
 
-void AudioPlayer::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {
+void AudioPlayer::prepareToPlay(int samplesPerBlockExpected,
+                                double sampleRate) {
     transport_source.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }

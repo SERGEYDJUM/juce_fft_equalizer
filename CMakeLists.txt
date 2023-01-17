@@ -18,7 +18,7 @@ juce_generate_juce_header(juce_fft_equalizer)
 
 target_sources(juce_fft_equalizer 
     PRIVATE 
-        Source/Main.cpp 
+        Source/Main.cpp
         Source/MainComponent.cpp 
         Source/AudioPlayer.cpp
         Source/Equalizer.cpp
