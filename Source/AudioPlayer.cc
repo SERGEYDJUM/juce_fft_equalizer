@@ -1,4 +1,4 @@
-#include "AudioPlayer.hpp"
+#include "AudioPlayer.h"
 
 #include <JuceHeader.h>
 

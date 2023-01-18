@@ -1,7 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 
-#include "AudioPlayer.hpp"
+#include "AudioPlayer.h"
 
 /// @brief Класс контента основного окна
 class MainComponent : public Component,

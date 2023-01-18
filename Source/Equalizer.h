@@ -1,7 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 
-#include "FFT.hpp"
+#include "FFT.h"
 
 /// @brief FFT-эквалайзер с 11 полосами.
 class Equalizer {

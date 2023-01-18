@@ -19,11 +19,11 @@ juce_generate_juce_header(juce_fft_equalizer)
 
 target_sources(juce_fft_equalizer 
     PRIVATE 
-        ${JUCE_FFT_EQUALIZER_SOURCES}/Main.cpp
-        ${JUCE_FFT_EQUALIZER_SOURCES}/MainComponent.cpp 
-        ${JUCE_FFT_EQUALIZER_SOURCES}/AudioPlayer.cpp
-        ${JUCE_FFT_EQUALIZER_SOURCES}/Equalizer.cpp
-        ${JUCE_FFT_EQUALIZER_SOURCES}/FFT.hpp
+        ${JUCE_FFT_EQUALIZER_SOURCES}/Main.cc
+        ${JUCE_FFT_EQUALIZER_SOURCES}/MainComponent.cc 
+        ${JUCE_FFT_EQUALIZER_SOURCES}/AudioPlayer.cc
+        ${JUCE_FFT_EQUALIZER_SOURCES}/Equalizer.cc
+        ${JUCE_FFT_EQUALIZER_SOURCES}/FFT.h
 )
 
 target_compile_definitions(juce_fft_equalizer
@@ -50,9 +50,9 @@ target_link_libraries(juce_fft_equalizer
 
 find_package(Doxygen)
 if (DOXYGEN_FOUND)
+    set(DOXYGEN_OUTPUT_LANGUAGE Russian)
     set(DOXYGEN_GENERATE_HTML YES)
-    # Если нужны приватные члены, то используйте Debug
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDOXYGEN_EXTRACT_PRIVATE")
+    set(DOXYGEN_EXTRACT_PRIVATE YES)
     set(DOXYGEN_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/docs)
     doxygen_add_docs(docs ${JUCE_FFT_EQUALIZER_SOURCES})
 endif()

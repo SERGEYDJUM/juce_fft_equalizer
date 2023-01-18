@@ -1,6 +1,6 @@
 #include <JuceHeader.h>
 
-#include "MainComponent.hpp"
+#include "MainComponent.h"
 
 /// @brief Основной класс приложения, сгенерирован Projucer-ом для проекта типа
 /// "GUI-приложение", инстанциируется JUCE-ом.

@@ -1,5 +1,5 @@
 #pragma once
-#include <JuceHeader.h>
+// #include <JuceHeader.h>
 #include <complex>
 #include <valarray>
 
@@ -60,6 +60,7 @@ class FFT {
    private:
     // /// @brief Рекурсивный aлгоритм Cooley–Tukey
     // /// @param inp_arr ссылка на массив
+    // /// @details Источник: https://rosettacode.org/wiki/Fast_Fourier_transform
     // void _fft(std::valarray<std::complex<float>>& inp_arr) {
     //     unsigned int _size = inp_arr.size();
     //     if (_size <= 1) return;
@@ -79,6 +80,7 @@ class FFT {
     // }
 
     /// @brief Итеративный aлгоритм Cooley–Tukey (Decimation-in-frequency)
+    /// @details Источник: https://rosettacode.org/wiki/Fast_Fourier_transform
     void _fft() {
         auto phiT = std::polar(1.0f, -3.141592741f / size);
         unsigned int half_k = size, k;

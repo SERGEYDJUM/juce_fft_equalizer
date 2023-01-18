@@ -1,7 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 
-#include "Equalizer.hpp"
+#include "Equalizer.h"
 
 /// @brief Воспроизводит аудиофайлы форматов wav, mp3, flac и может быть
 /// каких-то ещё

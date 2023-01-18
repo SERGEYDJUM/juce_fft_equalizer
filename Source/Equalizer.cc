@@ -1,4 +1,4 @@
-#include "Equalizer.hpp"
+#include "Equalizer.h"
 
 #ifdef FFT_DATA_LOGGING
 #include <fstream>
@@ -82,9 +82,9 @@ void Equalizer::equalizeBuffer(const AudioSourceChannelInfo& filledBuffer) {
         fft.read_block(buffer);
         fft.perform_forward();
 
-        for (size_t i = 1; i < block_size / 2; ++i) {
+        for (unsigned int i = 1; i < block_size / 2; ++i) {
             // Частота i-го слота FFT
-            auto freq = static_cast<size_t>(base_freq * i - base_freq / 2);
+            auto freq = static_cast<unsigned int>(base_freq * i - base_freq / 2);
 
             // Никто не услышит, да и полосы там не определены
             if (freq >= 23000) break;
