@@ -1,12 +1,17 @@
+//! @file AudioPlayer.cc
+//! @authors Джумагельдиев С.А.
+//! @note Ответственный: Полевой Д.В.
+//! @brief Файл с определением класса AudioPlayer
+
 #include "AudioPlayer.h"
 
 #include <JuceHeader.h>
 
 AudioPlayer::AudioPlayer(std::function<void(AudioPlayer *)> callback,
                          unsigned int buffer_size_order)
-    : state{Stopped}, state_callback{callback}, equalizer{buffer_size_order} {
-    format_manager.registerBasicFormats();
-    transport_source.addChangeListener(this);
+    : state_{Stopped}, state_callback_{callback}, equalizer_{buffer_size_order} {
+    format_manager_.registerBasicFormats();
+    transport_source_.addChangeListener(this);
     setAudioChannels(0, 2);
 
     auto new_device_sestup = deviceManager.getAudioDeviceSetup();
@@ -14,74 +19,74 @@ AudioPlayer::AudioPlayer(std::function<void(AudioPlayer *)> callback,
     deviceManager.setAudioDeviceSetup(new_device_sestup, true);
 }
 
-AudioPlayer::PlayerState AudioPlayer::getState() { return state; }
+AudioPlayer::PlayerState AudioPlayer::getState() { return state_; }
 
 void AudioPlayer::changeState(PlayerState new_state) {
-    if (state != new_state) {
-        state = new_state;
-        switch (state) {
+    if (state_ != new_state) {
+        state_ = new_state;
+        switch (state_) {
             case Stopped:
-                transport_source.stop();
-                transport_source.setPosition(0.0);
-                playback_position = 0.0;
+                transport_source_.stop();
+                transport_source_.setPosition(0.0);
+                playback_position_ = 0.0;
                 break;
 
             case Playing:
-                transport_source.start();
-                transport_source.setPosition(playback_position);
+                transport_source_.start();
+                transport_source_.setPosition(playback_position_);
                 break;
 
             case Paused:
-                playback_position = transport_source.getCurrentPosition();
-                transport_source.stop();
+                playback_position_ = transport_source_.getCurrentPosition();
+                transport_source_.stop();
                 break;
         }
-        state_callback(this);
+        state_callback_(this);
     }
 }
 
 void AudioPlayer::changeListenerCallback(ChangeBroadcaster *source) {
-    if (source == &transport_source) {
-        if (!transport_source.isPlaying() &&
-            transport_source.hasStreamFinished())
+    if (source == &transport_source_) {
+        if (!transport_source_.isPlaying() &&
+            transport_source_.hasStreamFinished())
             changeState(Stopped);
     }
 }
 
 void AudioPlayer::getNextAudioBlock(
     const AudioSourceChannelInfo &bufferToFill) {
-    if (reader_source.get() == nullptr) {
+    if (reader_source_.get() == nullptr) {
         bufferToFill.clearActiveBufferRegion();
     } else {
-        transport_source.getNextAudioBlock(bufferToFill);
-        if (state == Playing) equalizer.equalizeBuffer(bufferToFill);
+        transport_source_.getNextAudioBlock(bufferToFill);
+        if (state_ == Playing) equalizer_.equalizeBuffer(bufferToFill);
     }
 }
 
-void AudioPlayer::releaseResources() { transport_source.releaseResources(); }
+void AudioPlayer::releaseResources() { transport_source_.releaseResources(); }
 
 AudioPlayer::~AudioPlayer() {
-    reader_source = nullptr;
-    chooser = nullptr;
+    reader_source_ = nullptr;
+    chooser_ = nullptr;
 }
 
 void AudioPlayer::selectFile() {
-    chooser = std::make_unique<FileChooser>("Select audiofile to play...",
+    chooser_ = std::make_unique<FileChooser>("Select audiofile to play...",
                                             File{}, "*.wav;*.mp3;*.flac");
     auto fc_flags =
         FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
-    chooser->launchAsync(fc_flags, [this](const FileChooser &file_chooser) {
+    chooser_->launchAsync(fc_flags, [this](const FileChooser &file_chooser) {
         auto file = file_chooser.getResult();
         if (file != File{}) {
-            auto *reader = format_manager.createReaderFor(file);
+            auto *reader = format_manager_.createReaderFor(file);
             if (reader != nullptr) {
                 changeState(Stopped);
                 auto new_reader_source =
                     std::make_unique<AudioFormatReaderSource>(reader, true);
-                transport_source.setSource(new_reader_source.get(), 0, nullptr,
+                transport_source_.setSource(new_reader_source.get(), 0, nullptr,
                                            reader->sampleRate);
-                std::swap(new_reader_source, reader_source);
-                equalizer.updateSampleRate(
+                std::swap(new_reader_source, reader_source_);
+                equalizer_.updateSampleRate(
                     static_cast<float>(reader->sampleRate));
                 changeState(Playing);
             }
@@ -90,26 +95,26 @@ void AudioPlayer::selectFile() {
 }
 
 void AudioPlayer::setVolumeGain(float new_level) {
-    transport_source.setGain(new_level);
+    transport_source_.setGain(new_level);
 }
 
 void AudioPlayer::updateEqualizerBand(unsigned int band, float gain) {
-    equalizer.updateBand(band, gain);
+    equalizer_.updateBand(band, gain);
 }
 
 void AudioPlayer::jumpSeconds(double seconds) {
-    if (state != Playing) return;
-    auto new_pos = transport_source.getCurrentPosition() + seconds;
-    if (new_pos < transport_source.getLengthInSeconds()) {
+    if (state_ != Playing) return;
+    auto new_pos = transport_source_.getCurrentPosition() + seconds;
+    if (new_pos < transport_source_.getLengthInSeconds()) {
         if (new_pos >= 0) {
-            transport_source.setPosition(new_pos);
+            transport_source_.setPosition(new_pos);
         } else {
-            transport_source.setPosition(0);
+            transport_source_.setPosition(0);
         }
     }
 }
 
 void AudioPlayer::prepareToPlay(int samplesPerBlockExpected,
                                 double sampleRate) {
-    transport_source.prepareToPlay(samplesPerBlockExpected, sampleRate);
+    transport_source_.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }

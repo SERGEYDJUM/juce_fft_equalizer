@@ -1,3 +1,8 @@
+//! @file AudioPlayer.h
+//! @authors Джумагельдиев С.А.
+//! @note Ответственный: Полевой Д.В.
+//! @brief Заголовочный файл с объявлением класса AudioPlayer
+
 #pragma once
 #include <JuceHeader.h>
 
@@ -47,7 +52,7 @@ class AudioPlayer : public AudioAppComponent, public ChangeListener {
      * @brief Возвращает громкость плеера.
      * @return Громкость от 0 до 1.
      */
-    float getVolumeGain() { return transport_source.getGain(); };
+    float getVolumeGain() { return transport_source_.getGain(); };
 
     /// @brief Обновляет коэффициенты для частотного диапазона эквалайзера.
     /// @param band номер полосы.
@@ -64,34 +69,34 @@ class AudioPlayer : public AudioAppComponent, public ChangeListener {
 #ifdef FFT_DATA_LOGGING
     /// @brief Указывает эквалайзеру записать результат FFT следующего
     /// аудиобуфера на диск.
-    void logNextBlock() { equalizer.log_next_block = true; }
+    void logNextBlock() { equalizer_.log_next_block = true; }
 #endif
 
    private:
     /// @brief Состояние плеера
-    PlayerState state;
+    PlayerState state_;
 
     /// @brief Позиция проигрывания
-    double playback_position = 0.0;
+    double playback_position_ = 0.0;
 
     /// @brief Встроенный эквалайзер
-    Equalizer equalizer;
+    Equalizer equalizer_;
 
     /// @brief Управляет списком поддерживаемых форматов и определяет какой
     /// использовать для аудиофайла
-    AudioFormatManager format_manager;
+    AudioFormatManager format_manager_;
 
     /// @brief Воспроизводит аудиобуферы
-    AudioTransportSource transport_source;
+    AudioTransportSource transport_source_;
 
     /// @brief Хранит окно выбора файлов, необходимо в силу асинхронности
-    std::unique_ptr<FileChooser> chooser;
+    std::unique_ptr<FileChooser> chooser_;
 
     /// @brief Читает данные из аудиофайла
-    std::unique_ptr<AudioFormatReaderSource> reader_source;
+    std::unique_ptr<AudioFormatReaderSource> reader_source_;
 
     /// @brief Хранит коллбэк, вызываемый при изменении состояния
-    std::function<void(AudioPlayer *)> state_callback;
+    std::function<void(AudioPlayer *)> state_callback_;
 
     /// @brief Вызывается при изменении состояния AudioTransportSource,
     /// используется для обработки остановки трека.

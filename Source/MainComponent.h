@@ -1,3 +1,8 @@
+//! @file MainComponent.h
+//! @authors Джумагельдиев С.А.
+//! @note Ответственный: Полевой Д.В.
+//! @brief Заголовочный файл с объявлением класса MainComponent
+
 #pragma once
 #include <JuceHeader.h>
 
@@ -42,28 +47,28 @@ class MainComponent : public Component,
 
    private:
     /// @brief Количество регулируемых диапазонов частот (полос)
-    static constexpr unsigned int bands_num = 11;
+    static constexpr unsigned int bands_num_ = 11;
 
     /// @brief Плеер со встроенным эквалайзером
-    std::unique_ptr<AudioPlayer> player;
+    std::unique_ptr<AudioPlayer> player_;
 
     /// @brief Слайдеры, отвечающие за полосы
-    OwnedArray<Slider> knobs;
+    OwnedArray<Slider> knobs_;
 
     /// @brief Надписи герцовок под слайдерами
-    OwnedArray<Label> knob_labels;
+    OwnedArray<Label> knob_labels_;
 
     /// @brief Регулятор громкости
-    std::unique_ptr<Slider> volume_slider;
+    std::unique_ptr<Slider> volume_slider_;
 
     /// @brief Кнопка, открывающая окно выбора файла
-    std::unique_ptr<TextButton> fileselect_button;
+    std::unique_ptr<TextButton> fileselect_button_;
 
     /// @brief Кнопка паузы с меняющимся текстом
-    std::unique_ptr<TextButton> playback_button;
+    std::unique_ptr<TextButton> playback_button_;
 
     /// @brief Надпись "Громкость"
-    std::unique_ptr<Label> volume_label;
+    std::unique_ptr<Label> volume_label_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

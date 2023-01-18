@@ -1,3 +1,6 @@
+# Автор: Джумагельдиев С.А.
+# Ответственный: Полевой Д.В.
+
 cmake_minimum_required(VERSION 3.15)
 project(juce_fft_equalizer VERSION 1.1.0)
 
@@ -51,6 +54,7 @@ target_link_libraries(juce_fft_equalizer
 find_package(Doxygen)
 if (DOXYGEN_FOUND)
     set(DOXYGEN_OUTPUT_LANGUAGE Russian)
+    set(DOXYGEN_HTML_COLORSTYLE LIGHT)
     set(DOXYGEN_GENERATE_HTML YES)
     set(DOXYGEN_EXTRACT_PRIVATE YES)
     set(DOXYGEN_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/docs)

@@ -1,3 +1,9 @@
+//! @file Equalizer.h
+//! @authors Джумагельдиев С.А.
+//! @note Ответственный: Полевой Д.В.
+//! @brief Заголовочный файл эквалайзера
+//! @todo Сглаживание harmonic_gain_
+
 #pragma once
 #include <JuceHeader.h>
 
@@ -46,24 +52,24 @@ class Equalizer {
     };
 
     /// @brief Хранит все полосы
-    Band bands[11];
+    Band bands_[11];
 
     /// @brief Должна соответствовать частоте блока fft с индексом 1, а на
     /// практике требует калибровки
-    float base_freq;
+    float base_freq_;
 
     /// @brief Размер одного канала буфера и размер блока FFT
-    unsigned int block_size;
+    unsigned int block_size_;
 
     /// @brief Частота дискретизации
-    float sample_rate;
+    float sample_rate_;
 
     /// @brief Объект FFT для аудио
-    FFT fft;
+    FFT fft_;
 
     // /// @brief FFT для сглаживания полос
-    // FFT fft_gains;
+    // FFT fft_gains_;
 
     /// @brief Коэффициенты (от 0 до 2) для каждой целой частоты
-    std::array<float, 23000> harmonic_gain;
+    std::array<float, 23000> harmonic_gain_;
 };

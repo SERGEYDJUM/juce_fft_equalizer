@@ -1,3 +1,8 @@
+//! @file FFT.h
+//! @authors Джумагельдиев С.А.
+//! @note Ответственный: Полевой Д.В.
+//! @brief Содержит класс FFT
+
 #pragma once
 // #include <JuceHeader.h>
 #include <complex>
@@ -8,69 +13,69 @@
 class FFT {
    public:
     /// @brief Конструирует FFT с заданным размером.
-    /// @param size_order порядок размера преобразуемого блока.
-    FFT(unsigned int size_order) : order{size_order}, size{1u << order} {
-        fft_data.resize(size);
-        index_reverse_table.resize(size);
-        for (unsigned int i = 0; i < size; i++) {
-            index_reverse_table[i] = _index_reversed(i);
+    /// @param size_order_ порядок размера преобразуемого блока.
+    FFT(unsigned int size_order_) : order_{size_order_}, size_{1u << order_} {
+        fft_data_.resize(size_);
+        index_reverse_table_.resize(size_);
+        for (unsigned int i = 0; i < size_; i++) {
+            index_reverse_table_[i] = indexReversed(i);
         }
     }
 
     /// @brief Производит прямое преобразование Фурье хранимого блока без
     /// нормализации.
-    inline void perform_forward() { _fft(); }
+    inline void performForward() { fft(); }
 
     /// @brief Производит обратное преобразование Фурье хранимого блока.
-    inline void perform_inverse() {
-        fft_data = fft_data.apply(std::conj);
-        _fft();
-        fft_data = fft_data.apply(std::conj);
-        fft_data /= static_cast<float>(size);
+    inline void performInverse() {
+        fft_data_ = fft_data_.apply(std::conj);
+        fft();
+        fft_data_ = fft_data_.apply(std::conj);
+        fft_data_ /= static_cast<float>(size_);
     }
 
     /// @brief Загружает блок в память FFT.
     /// @param buffer одноканальный буффер размером с блок или больше.
     /// @param offset индекс элемента, с которого начать читать.
-    inline void read_block(float buffer[], unsigned int offset = 0) {
-        for (unsigned int i = 0; i < size; ++i) {
-            fft_data[i] = buffer[i + offset];
+    inline void readBlock(float buffer[], unsigned int offset = 0) {
+        for (unsigned int i = 0; i < size_; ++i) {
+            fft_data_[i] = buffer[i + offset];
         }
     }
 
     /// @brief Выгружает блок FFT в буффер.
     /// @param buffer одноканальный буффер размером с блок или больше.
     /// @param offset индекс элемента, с которого начать писать.
-    inline void write_block(float buffer[], unsigned int offset = 0) {
-        for (unsigned int i = 0; i < size; ++i) {
-            buffer[i + offset] = fft_data[i].real();
+    inline void writeBlock(float buffer[], unsigned int offset = 0) {
+        for (unsigned int i = 0; i < size_; ++i) {
+            buffer[i + offset] = fft_data_[i].real();
         }
     }
 
     /// @brief Позволяет напрямую изменять элементы внутренней памяти FFT.
     /// @details Для справки: fft[0] - DC слот, хранит сумму сэмплов блока,
-    /// fft[size/2] - слот Найквиста, хранит данные для (частота дискретизации)
-    /// / 2, для остальных fft[i] = std::conj(fft[size - i]).
+    /// fft[size_/2] - слот Найквиста, хранит данные для (частота дискретизации)
+    /// / 2, для остальных fft[i] = std::conj(fft[size_ - i]).
     /// @param index номер элемента.
     /// @return ссылка на элемент.
     inline std::complex<float>& operator[](size_t index) {
-        return fft_data[index];
+        return fft_data_[index];
     }
 
    private:
     // /// @brief Рекурсивный aлгоритм Cooley–Tukey
     // /// @param inp_arr ссылка на массив
     // /// @details Источник: https://rosettacode.org/wiki/Fast_Fourier_transform
-    // void _fft(std::valarray<std::complex<float>>& inp_arr) {
-    //     unsigned int _size = inp_arr.size();
+    // void fft(std::valarray<std::complex<float>>& inp_arr) {
+    //     unsigned int _size = inp_arr.size_();
     //     if (_size <= 1) return;
 
     //     std::valarray<std::complex<float>> even = inp_arr[std::slice(0, _size
     //     / 2, 2)]; std::valarray<std::complex<float>> odd =
     //     inp_arr[std::slice(1, _size / 2, 2)];
 
-    //     _fft(even);
-    //     _fft(odd);
+    //     fft(even);
+    //     fft(odd);
 
     //     for (unsigned int i = 0; i < _size / 2; ++i) {
     //         auto t = std::polar(1.0f, -6.283185307179586f * i / _size) *
@@ -81,54 +86,54 @@ class FFT {
 
     /// @brief Итеративный aлгоритм Cooley–Tukey (Decimation-in-frequency)
     /// @details Источник: https://rosettacode.org/wiki/Fast_Fourier_transform
-    void _fft() {
-        auto phiT = std::polar(1.0f, -3.141592741f / size);
-        unsigned int half_k = size, k;
+    void fft() {
+        auto phiT = std::polar(1.0f, -3.141592741f / size_);
+        unsigned int half_k = size_, k;
         while (half_k != 0) {
             k = half_k;
             half_k >>= 1;
             phiT *= phiT;
             std::complex<float> magT = 1.0f;
             for (unsigned int l = 0; l < half_k; ++l) {
-                for (unsigned int a = l; a < size; a += k) {
+                for (unsigned int a = l; a < size_; a += k) {
                     auto b = a + half_k;
-                    auto temp = fft_data[a] - fft_data[b];
-                    fft_data[a] += fft_data[b];
-                    fft_data[b] = temp * magT;
+                    auto temp = fft_data_[a] - fft_data_[b];
+                    fft_data_[a] += fft_data_[b];
+                    fft_data_[b] = temp * magT;
                 }
                 magT *= phiT;
             }
         }
 
-        for (unsigned int i = 0; i < size; ++i) {
-            auto j = index_reverse_table[i];
-            if (i != j) std::swap(fft_data[i], fft_data[j]);
+        for (unsigned int i = 0; i < size_; ++i) {
+            auto j = index_reverse_table_[i];
+            if (i != j) std::swap(fft_data_[i], fft_data_[j]);
         }
     }
 
     /// @brief Даёт индекс в блоке FFT, обратный данному.
     /// @param x индекс.
     /// @return обратный индекс.
-    inline unsigned int _index_reversed(unsigned int x) {
+    inline unsigned int indexReversed(unsigned int x) {
         auto y = x;
         y = ((y >> 1) & 0x55555555) | ((y & 0x55555555) << 1);
         y = ((y >> 2) & 0x33333333) | ((y & 0x33333333) << 2);
         y = ((y >> 4) & 0x0F0F0F0F) | ((y & 0x0F0F0F0F) << 4);
         y = ((y >> 8) & 0x00FF00FF) | ((y & 0x00FF00FF) << 8);
         y = (y >> 16) | (y << 16);
-        y >>= (32 - order);
+        y >>= (32 - order_);
         return (y > x) ? y : x;
     }
 
     /// @brief Порядок размера блока FFT
-    const unsigned int order;
+    const unsigned int order_;
 
     /// @brief Размер блока FFT
-    const unsigned int size;
+    const unsigned int size_;
 
     /// @brief Хранит обратные индексы для оптимизации
-    std::valarray<unsigned int> index_reverse_table;
+    std::valarray<unsigned int> index_reverse_table_;
 
     /// @brief Хранит данные, на которых применяются преобразования
-    std::valarray<std::complex<float>> fft_data;
+    std::valarray<std::complex<float>> fft_data_;
 };
