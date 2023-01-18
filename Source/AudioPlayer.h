@@ -19,9 +19,10 @@ class AudioPlayer : public AudioAppComponent, public ChangeListener {
      * @brief Конструирует плеер.
      * @param callback функция, которая будет вызываться при изменении состояния
      * объекта.
+     * @param buffer_size_order предпочитаемый размер блока аудио
      */
     AudioPlayer(std::function<void(AudioPlayer *)> callback,
-                unsigned int buffer_size_order);
+                unsigned int buffer_size_order = 11);
 
     /**
      * @brief Возвращает состояние плеера.

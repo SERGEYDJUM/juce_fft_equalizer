@@ -5,7 +5,7 @@
 
 #include "MainComponent.h"
 
-MainComponent::MainComponent(unsigned int buffer_size_order) {
+MainComponent::MainComponent() {
     for (int i = 0; i < bands_num_; ++i) {
         knobs_.add(new Slider);
         auto &knob = *knobs_.getLast();
@@ -55,10 +55,9 @@ MainComponent::MainComponent(unsigned int buffer_size_order) {
     playback_button_->addListener(this);
     addAndMakeVisible(playback_button_.get());
 
-    auto player_callback = [this](AudioPlayer *plr) {
-        playerStateChanged(plr);
-    };
-    player_.reset(new AudioPlayer(player_callback, buffer_size_order));
+    player_.reset(
+        new AudioPlayer([this](AudioPlayer *plr) { playerStateChanged(plr); }));
+
     addChildComponent(player_.get());
 
     setWantsKeyboardFocus(true);

@@ -14,12 +14,8 @@ class MainComponent : public Component,
                       public KeyListener,
                       public Button::Listener {
    public:
-    /**
-     * @brief Конструирует весь контент основного окна и создаёт плеер.
-     * @param buffer_size_order указывает степень 2-ки размера аудиобуффера и
-     * блока FFT.
-     */
-    explicit MainComponent(unsigned int buffer_size_order = 11);
+    /// @brief Конструирует весь контент основного окна и создаёт плеер.
+    MainComponent();
 
     /// @brief Вызывается при изменении размера окна, адаптирует контент.
     void resized() override;
