@@ -1,6 +1,4 @@
 build
-doxygen
 .vscode
 docs
-
-*.ipynb
+AudioSamples
