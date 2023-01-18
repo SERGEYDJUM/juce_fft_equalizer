@@ -30,6 +30,9 @@ Equalizer::Equalizer(unsigned int fft_order)
 }
 
 void Equalizer::updateSampleRate(float new_sample_rate) {
+    if (new_sample_rate < 0) 
+        throw std::domain_error("Sample rate is out of range");
+
     sample_rate_ = new_sample_rate;
     base_freq_ = sample_rate_ / block_size_;
 
@@ -39,6 +42,11 @@ void Equalizer::updateSampleRate(float new_sample_rate) {
 }
 
 void Equalizer::updateBand(unsigned int band, float gain) {
+    if (band > 10)
+        throw std::domain_error("Band is out of range");
+    if (gain > 2 || gain < 0)
+        throw std::domain_error("Gain is out of range");
+    
     bands_[band].gain = gain;
     _generate_harmonic_gain();
 }

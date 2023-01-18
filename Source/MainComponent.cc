@@ -26,7 +26,7 @@ MainComponent::MainComponent(unsigned int buffer_size_order) {
     int band_central_harmonic = 16000;
     for (int i = bands_num_ - 1; i >= 0; --i) {
         knob_labels_[i]->setText(std::to_string(band_central_harmonic) + " Hz",
-                                NotificationType::dontSendNotification);
+                                 NotificationType::dontSendNotification);
         band_central_harmonic /= 2;
     }
 
@@ -77,41 +77,39 @@ MainComponent::~MainComponent() {
 }
 
 void MainComponent::resized() {
-    using Track = Grid::TrackInfo;
-    using Fr = Grid::Fr;
-    using Item = GridItem;
-
     Grid grid;
-    grid.templateRows = {Track(Fr(12)), Track(Fr(1)), Track(Fr(1)),
-                         Track(Fr(2))};
+    grid.templateRows = {
+        Grid::TrackInfo(Grid::Fr(12)), Grid::TrackInfo(Grid::Fr(1)),
+        Grid::TrackInfo(Grid::Fr(1)), Grid::TrackInfo(Grid::Fr(2))};
+
     for (int i = 0; i < bands_num_; ++i) {
-        grid.templateColumns.add(Track(Fr(1)));
+        grid.templateColumns.add(Grid::TrackInfo(Grid::Fr(1)));
     }
 
     for (int i = 1; i <= bands_num_; ++i) {
-        Item knob_cell{knobs_[i - 1]};
+        GridItem knob_cell{knobs_[i - 1]};
         knob_cell.setArea(1, i, 1, i);
         grid.items.add(knob_cell);
 
-        Item knob_label_cell{knob_labels_[i - 1]};
+        GridItem knob_label_cell{knob_labels_[i - 1]};
         knob_label_cell.setArea(2, i, 2, i);
         grid.items.add(knob_label_cell);
     }
 
-    Item::Margin common_margin{5, 5, 5, 5};
-    Item fsbutton{fileselect_button_.get()};
+    GridItem::Margin common_margin{5, 5, 5, 5};
+    GridItem fsbutton{fileselect_button_.get()};
     fsbutton.setArea(4, 1, 4, 4);
     grid.items.add(fsbutton.withMargin(common_margin));
 
-    Item ppbutton{playback_button_.get()};
+    GridItem ppbutton{playback_button_.get()};
     ppbutton.setArea(4, 4, 4, 6);
     grid.items.add(ppbutton.withMargin(common_margin));
 
-    Item volumeslider{volume_slider_.get()};
+    GridItem volumeslider{volume_slider_.get()};
     volumeslider.setArea(4, 8, 4, 12);
     grid.items.add(volumeslider.withMargin(common_margin));
 
-    Item volumelabel{volume_label_.get()};
+    GridItem volumelabel{volume_label_.get()};
     volumelabel.setArea(4, 7, 4, 8);
     grid.items.add(volumelabel);
 

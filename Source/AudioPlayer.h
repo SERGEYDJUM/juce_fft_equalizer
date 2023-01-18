@@ -27,7 +27,7 @@ class AudioPlayer : public AudioAppComponent, public ChangeListener {
      * @brief Возвращает состояние плеера.
      * @return Текущее состояние.
      */
-    PlayerState getState();
+    PlayerState getState() const noexcept { return state_; }
 
     /**
      * @brief Меняет состояние плеера.
@@ -52,7 +52,7 @@ class AudioPlayer : public AudioAppComponent, public ChangeListener {
      * @brief Возвращает громкость плеера.
      * @return Громкость от 0 до 1.
      */
-    float getVolumeGain() { return transport_source_.getGain(); };
+    float getVolumeGain() const noexcept { return transport_source_.getGain(); }
 
     /// @brief Обновляет коэффициенты для частотного диапазона эквалайзера.
     /// @param band номер полосы.
@@ -69,7 +69,7 @@ class AudioPlayer : public AudioAppComponent, public ChangeListener {
 #ifdef FFT_DATA_LOGGING
     /// @brief Указывает эквалайзеру записать результат FFT следующего
     /// аудиобуфера на диск.
-    void logNextBlock() { equalizer_.log_next_block = true; }
+    void logNextBlock() noexcept { equalizer_.log_next_block = true; }
 #endif
 
    private:

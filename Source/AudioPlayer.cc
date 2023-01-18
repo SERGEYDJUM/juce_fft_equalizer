@@ -9,7 +9,9 @@
 
 AudioPlayer::AudioPlayer(std::function<void(AudioPlayer *)> callback,
                          unsigned int buffer_size_order)
-    : state_{Stopped}, state_callback_{callback}, equalizer_{buffer_size_order} {
+    : state_{Stopped},
+      state_callback_{callback},
+      equalizer_{buffer_size_order} {
     format_manager_.registerBasicFormats();
     transport_source_.addChangeListener(this);
     setAudioChannels(0, 2);
@@ -18,8 +20,6 @@ AudioPlayer::AudioPlayer(std::function<void(AudioPlayer *)> callback,
     new_device_sestup.bufferSize = 1 << buffer_size_order;
     deviceManager.setAudioDeviceSetup(new_device_sestup, true);
 }
-
-AudioPlayer::PlayerState AudioPlayer::getState() { return state_; }
 
 void AudioPlayer::changeState(PlayerState new_state) {
     if (state_ != new_state) {
@@ -72,7 +72,7 @@ AudioPlayer::~AudioPlayer() {
 
 void AudioPlayer::selectFile() {
     chooser_ = std::make_unique<FileChooser>("Select audiofile to play...",
-                                            File{}, "*.wav;*.mp3;*.flac");
+                                             File{}, "*.wav;*.mp3;*.flac");
     auto fc_flags =
         FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
     chooser_->launchAsync(fc_flags, [this](const FileChooser &file_chooser) {
@@ -84,7 +84,7 @@ void AudioPlayer::selectFile() {
                 auto new_reader_source =
                     std::make_unique<AudioFormatReaderSource>(reader, true);
                 transport_source_.setSource(new_reader_source.get(), 0, nullptr,
-                                           reader->sampleRate);
+                                            reader->sampleRate);
                 std::swap(new_reader_source, reader_source_);
                 equalizer_.updateSampleRate(
                     static_cast<float>(reader->sampleRate));
@@ -95,6 +95,8 @@ void AudioPlayer::selectFile() {
 }
 
 void AudioPlayer::setVolumeGain(float new_level) {
+    if (new_level > 1 || new_level < 0)
+        throw std::domain_error("Volume gain is out of range");
     transport_source_.setGain(new_level);
 }
 

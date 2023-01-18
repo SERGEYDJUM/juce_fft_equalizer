@@ -39,6 +39,7 @@ class juce_fft_equalizer : public JUCEApplication {
     /// @brief Создаёт новое окно
     /// @param arguments аргументы при запуске 
     void initialise(const String &arguments) override {
+        arguments;
         mainWindow.reset(new MainWindow(getApplicationName()));
     }
 

@@ -36,17 +36,21 @@ class Equalizer {
 #endif
 
    private:
-    /// @brief Создаёт сглаженный массив коэффициентов по полосам
+    /// @brief Создаёт массив коэффициентов по полосам
     void _generate_harmonic_gain();
 
     /// @brief Хранит данные о полосе
     struct Band {
+
         /// @brief Центральная частота полосы
         unsigned int center;
+
         /// @brief Левая частотная граница
         unsigned int left;
+
         /// @brief Правая частотная граница
         unsigned int right;
+        
         /// @brief Коэффициент-множитель полосы
         float gain;
     };

@@ -24,18 +24,18 @@ class FFT {
 
     /// @brief Производит прямое преобразование Фурье хранимого блока без
     /// нормализации.
-    inline void performForward() { fft(); }
+    inline void performForward() noexcept { fft(); }
 
     /// @brief Производит обратное преобразование Фурье хранимого блока.
-    inline void performInverse() {
-        fft_data_ = fft_data_.apply(std::conj);
+    inline void performInverse() noexcept {
+        conjugateData();
         fft();
-        fft_data_ = fft_data_.apply(std::conj);
+        conjugateData();
         fft_data_ /= static_cast<float>(size_);
     }
 
     /// @brief Загружает блок в память FFT.
-    /// @param buffer одноканальный буффер размером с блок или больше.
+    /// @param buffer одноканальный буфер размером с блок или больше.
     /// @param offset индекс элемента, с которого начать читать.
     inline void readBlock(float buffer[], unsigned int offset = 0) {
         for (unsigned int i = 0; i < size_; ++i) {
@@ -43,10 +43,10 @@ class FFT {
         }
     }
 
-    /// @brief Выгружает блок FFT в буффер.
-    /// @param buffer одноканальный буффер размером с блок или больше.
+    /// @brief Выгружает блок FFT в буфер.
+    /// @param buffer одноканальный буфер размером с блок или больше.
     /// @param offset индекс элемента, с которого начать писать.
-    inline void writeBlock(float buffer[], unsigned int offset = 0) {
+    inline void writeBlock(float buffer[], unsigned int offset = 0) const {
         for (unsigned int i = 0; i < size_; ++i) {
             buffer[i + offset] = fft_data_[i].real();
         }
@@ -114,7 +114,7 @@ class FFT {
     /// @brief Даёт индекс в блоке FFT, обратный данному.
     /// @param x индекс.
     /// @return обратный индекс.
-    inline unsigned int indexReversed(unsigned int x) {
+    inline unsigned int indexReversed(unsigned int x) noexcept {
         auto y = x;
         y = ((y >> 1) & 0x55555555) | ((y & 0x55555555) << 1);
         y = ((y >> 2) & 0x33333333) | ((y & 0x33333333) << 2);
@@ -123,6 +123,13 @@ class FFT {
         y = (y >> 16) | (y << 16);
         y >>= (32 - order_);
         return (y > x) ? y : x;
+    }
+
+    /// @brief Меняет все элементы блока FFT на сопряженные
+    inline void conjugateData() noexcept {
+        for (auto &el : fft_data_) {
+            el = std::conj(el);
+        }
     }
 
     /// @brief Порядок размера блока FFT
