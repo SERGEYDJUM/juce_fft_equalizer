@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(juce_fft_equalizer VERSION 1.0.0)
+project(juce_fft_equalizer VERSION 1.1.0)
 
 set(JUCE_FFT_EQUALIZER_SOURCES ${PROJECT_SOURCE_DIR}/Source)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DFFT_DATA_LOGGING")
@@ -7,10 +7,10 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DFFT_DATA_LOGGING")
 include(FetchContent)
 set(FETCHCONTENT_QUIET FALSE)
 FetchContent_Declare(JUCE
-  GIT_REPOSITORY    https://github.com/juce-framework/JUCE.git
-  GIT_TAG           7.0.3
-  GIT_SHALLOW TRUE
-  GIT_PROGRESS TRUE
+    GIT_REPOSITORY    https://github.com/juce-framework/JUCE.git
+    GIT_TAG           7.0.3
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
 )
 FetchContent_MakeAvailable(JUCE)
 
@@ -23,7 +23,7 @@ target_sources(juce_fft_equalizer
         ${JUCE_FFT_EQUALIZER_SOURCES}/MainComponent.cpp 
         ${JUCE_FFT_EQUALIZER_SOURCES}/AudioPlayer.cpp
         ${JUCE_FFT_EQUALIZER_SOURCES}/Equalizer.cpp
-        ${JUCE_FFT_EQUALIZER_SOURCES}/fft.h
+        ${JUCE_FFT_EQUALIZER_SOURCES}/FFT.hpp
 )
 
 target_compile_definitions(juce_fft_equalizer

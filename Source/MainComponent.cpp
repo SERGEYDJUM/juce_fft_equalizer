@@ -1,4 +1,4 @@
-#include "MainComponent.h"
+#include "MainComponent.hpp"
 
 MainComponent::MainComponent(unsigned int buffer_size_order) {
     for (int i = 0; i < bands_num; ++i) {

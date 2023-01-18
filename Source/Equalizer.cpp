@@ -1,4 +1,4 @@
-#include "Equalizer.h"
+#include "Equalizer.hpp"
 
 #ifdef FFT_DATA_LOGGING
 #include <fstream>
