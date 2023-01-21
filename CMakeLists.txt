@@ -4,13 +4,23 @@
 cmake_minimum_required(VERSION 3.15)
 project(juce_fft_equalizer VERSION 1.1.0)
 
-include(CPM.cmake)
-CPMAddPackage("gh:juce-framework/JUCE#7.0.3")
-
-set(EQ_SRC ${PROJECT_SOURCE_DIR}/Source)
+set(EQ_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Source)
 
 # Добавляет логгирование данных FFT при сборке с Debug
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DFFT_DATA_LOGGING")
+
+include(CPM.cmake)
+CPMAddPackage("gh:juce-framework/JUCE#7.0.3")
+
+find_package(Doxygen)
+if (DOXYGEN_FOUND)
+    set(DOXYGEN_OUTPUT_LANGUAGE Russian)
+    set(DOXYGEN_HTML_COLORSTYLE LIGHT)
+    set(DOXYGEN_GENERATE_HTML YES)
+    set(DOXYGEN_EXTRACT_PRIVATE YES)
+    set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/docs)
+    doxygen_add_docs(docs ${EQ_SRC} ALL)
+endif()
 
 juce_add_gui_app(juce_fft_equalizer PRODUCT_NAME "FFT Equalizer")
 juce_generate_juce_header(juce_fft_equalizer)
@@ -45,14 +55,4 @@ target_link_libraries(juce_fft_equalizer
         juce::juce_recommended_warning_flags
 )
 
-find_package(Doxygen)
-if (DOXYGEN_FOUND)
-    set(DOXYGEN_OUTPUT_LANGUAGE Russian)
-    set(DOXYGEN_HTML_COLORSTYLE LIGHT)
-    set(DOXYGEN_GENERATE_HTML YES)
-    set(DOXYGEN_EXTRACT_PRIVATE YES)
-    set(DOXYGEN_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/docs)
-    doxygen_add_docs(docs ${EQ_SRC} ALL)
-endif()
-
-install(TARGETS juce_fft_equalizer DESTINATION ${PROJECT_SOURCE_DIR}/bin)
+install(TARGETS juce_fft_equalizer DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
