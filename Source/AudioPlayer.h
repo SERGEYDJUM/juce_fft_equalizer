@@ -8,7 +8,7 @@
 
 #include "Equalizer.h"
 
-/// @brief Воспроизводит аудиофайлы форматов wav, mp3, flac и может быть
+/// @brief Воспроизводит аудиофайлы форматов wav, mp3 и flac
 /// каких-то ещё
 class AudioPlayer : public AudioAppComponent, public ChangeListener {
    public:
