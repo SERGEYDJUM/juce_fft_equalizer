@@ -4,29 +4,24 @@
 cmake_minimum_required(VERSION 3.15)
 project(juce_fft_equalizer VERSION 1.1.0)
 
-set(JUCE_FFT_EQUALIZER_SOURCES ${PROJECT_SOURCE_DIR}/Source)
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DFFT_DATA_LOGGING")
+include(CPM.cmake)
+CPMAddPackage("gh:juce-framework/JUCE#7.0.3")
 
-include(FetchContent)
-set(FETCHCONTENT_QUIET FALSE)
-FetchContent_Declare(JUCE
-    GIT_REPOSITORY    https://github.com/juce-framework/JUCE.git
-    GIT_TAG           7.0.3
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE
-)
-FetchContent_MakeAvailable(JUCE)
+set(EQ_SRC ${PROJECT_SOURCE_DIR}/Source)
+
+# Добавляет логгирование данных FFT при сборке с Debug
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DFFT_DATA_LOGGING")
 
 juce_add_gui_app(juce_fft_equalizer PRODUCT_NAME "FFT Equalizer")
 juce_generate_juce_header(juce_fft_equalizer)
 
 target_sources(juce_fft_equalizer 
     PRIVATE 
-        ${JUCE_FFT_EQUALIZER_SOURCES}/Main.cc
-        ${JUCE_FFT_EQUALIZER_SOURCES}/MainComponent.cc 
-        ${JUCE_FFT_EQUALIZER_SOURCES}/AudioPlayer.cc
-        ${JUCE_FFT_EQUALIZER_SOURCES}/Equalizer.cc
-        ${JUCE_FFT_EQUALIZER_SOURCES}/FFT.h
+        ${EQ_SRC}/Main.cc
+        ${EQ_SRC}/MainComponent.cc 
+        ${EQ_SRC}/AudioPlayer.cc
+        ${EQ_SRC}/Equalizer.cc
+        # ${EQ_SRC}/FFT.h
 )
 
 target_compile_definitions(juce_fft_equalizer
@@ -50,7 +45,6 @@ target_link_libraries(juce_fft_equalizer
         juce::juce_recommended_warning_flags
 )
 
-
 find_package(Doxygen)
 if (DOXYGEN_FOUND)
     set(DOXYGEN_OUTPUT_LANGUAGE Russian)
@@ -58,5 +52,7 @@ if (DOXYGEN_FOUND)
     set(DOXYGEN_GENERATE_HTML YES)
     set(DOXYGEN_EXTRACT_PRIVATE YES)
     set(DOXYGEN_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/docs)
-    doxygen_add_docs(docs ${JUCE_FFT_EQUALIZER_SOURCES})
+    doxygen_add_docs(docs ${EQ_SRC} ALL)
 endif()
+
+install(TARGETS juce_fft_equalizer DESTINATION ${PROJECT_SOURCE_DIR}/bin)
