@@ -8,9 +8,13 @@ Supports wav, mp3 and flac audiofiles for now.
 
 
 # Building and installing
-1. Clone this repository.
+
+It assumes that CMake, Git and build tools are already installed. 
+
+0. If you are building on linux, install ```pkg-config``` and ```juce-tools``` packages.
+1. ```git clone https://github.com/SERGEYDJUM/juce_fft_equalizer.git```
 2. ```cd juce_fft_equalizer```
-4. ```cmake . build```
+4. ```cmake -S . -B build```
 5. ```cmake --build build --config Release```
 6. ```cmake --install build```
 
