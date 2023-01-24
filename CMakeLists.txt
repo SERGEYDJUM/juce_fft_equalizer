@@ -58,3 +58,4 @@ target_link_libraries(juce_fft_equalizer
 )
 
 install(TARGETS juce_fft_equalizer)
+install(SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/copy_audio.cmake)
