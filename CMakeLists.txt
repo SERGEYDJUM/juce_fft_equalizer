@@ -57,4 +57,4 @@ target_link_libraries(juce_fft_equalizer
         juce::juce_recommended_warning_flags
 )
 
-install(TARGETS juce_fft_equalizer DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+install(TARGETS juce_fft_equalizer DESTINATION /bin)
