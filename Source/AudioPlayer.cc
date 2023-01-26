@@ -63,14 +63,10 @@ void AudioPlayer::getNextAudioBlock(
     }
 }
 
-void AudioPlayer::releaseResources() { 
-    transport_source_.releaseResources();
-    reader_source_->releaseResources();
-}
+void AudioPlayer::releaseResources() { transport_source_.releaseResources(); }
 
 AudioPlayer::~AudioPlayer() {
     transport_source_.stop();
-    releaseResources();
     shutdownAudio();
     reader_source_ = nullptr;
     chooser_ = nullptr;
