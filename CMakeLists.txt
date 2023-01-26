@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(juce_fft_equalizer VERSION 1.1.0)
 
-set(EQ_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Source)
+set(EQ_SRC ${juce_fft_equalizer_SOURCE_DIR}/Source)
 
 # Добавляет логгирование данных FFT при сборке с Debug
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DFFT_DATA_LOGGING")
@@ -20,7 +20,7 @@ if (DOXYGEN_FOUND)
     set(DOXYGEN_GENERATE_LATEX YES)
     set(DOXYGEN_GENERATE_RTF YES)
     set(DOXYGEN_EXTRACT_PRIVATE YES)
-    set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/docs)
+    set(DOXYGEN_OUTPUT_DIRECTORY ${juce_fft_equalizer_SOURCE_DIR}/docs)
     doxygen_add_docs(docs ${EQ_SRC} ALL)
 endif()
 
@@ -57,5 +57,5 @@ target_link_libraries(juce_fft_equalizer
         juce::juce_recommended_warning_flags
 )
 
-install(TARGETS juce_fft_equalizer)
-install(SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/copy_audio.cmake)
+install(TARGETS juce_fft_equalizer DESTINATION bin)
+install(DIRECTORY ${juce_fft_equalizer_SOURCE_DIR}/AudioSamples/ DESTINATION bin/samples)
