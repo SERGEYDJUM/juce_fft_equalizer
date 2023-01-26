@@ -16,6 +16,6 @@ It assumes that CMake, Git and build tools are already installed.
 2. ```cd juce_fft_equalizer```
 4. ```cmake -S . -B build```
 5. ```cmake --build build --config Release```
-6. ```cmake --install build```
+6. ```cmake --install build --prefix .```
 
 Executable will be in ./bin and Doxygen-generated documentation in ./docs
