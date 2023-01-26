@@ -72,7 +72,7 @@ AudioPlayer::~AudioPlayer() {
 
 void AudioPlayer::selectFile() {
     chooser_ = std::make_unique<FileChooser>("Select audiofile to play...",
-                                             File{"."}, "*.wav;*.mp3;*.flac");
+                                             File::getCurrentWorkingDirectory(), "*.wav;*.mp3;*.flac");
     auto fc_flags =
         FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
     chooser_->launchAsync(fc_flags, [this](const FileChooser &file_chooser) {
