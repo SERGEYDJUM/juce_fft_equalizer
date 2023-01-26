@@ -16,9 +16,9 @@ AudioPlayer::AudioPlayer(std::function<void(AudioPlayer *)> callback,
     transport_source_.addChangeListener(this);
     setAudioChannels(0, 2);
 
-    auto new_device_sestup = deviceManager.getAudioDeviceSetup();
-    new_device_sestup.bufferSize = 1 << buffer_size_order;
-    deviceManager.setAudioDeviceSetup(new_device_sestup, true);
+    auto new_device_setup = deviceManager.getAudioDeviceSetup();
+    new_device_setup.bufferSize = 1 << buffer_size_order;
+    deviceManager.setAudioDeviceSetup(new_device_setup, true);
 }
 
 void AudioPlayer::changeState(PlayerState new_state) {
@@ -63,9 +63,15 @@ void AudioPlayer::getNextAudioBlock(
     }
 }
 
-void AudioPlayer::releaseResources() { transport_source_.releaseResources(); }
+void AudioPlayer::releaseResources() { 
+    transport_source_.releaseResources();
+    reader_source_->releaseResources();
+}
 
 AudioPlayer::~AudioPlayer() {
+    transport_source_.stop();
+    releaseResources();
+    shutdownAudio();
     reader_source_ = nullptr;
     chooser_ = nullptr;
 }
