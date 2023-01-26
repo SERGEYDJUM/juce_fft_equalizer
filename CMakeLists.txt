@@ -24,7 +24,7 @@ if (DOXYGEN_FOUND)
     doxygen_add_docs(docs ${EQ_SRC} ALL)
 endif()
 
-juce_add_gui_app(juce_fft_equalizer PRODUCT_NAME "FFT Equalizer")
+juce_add_gui_app(juce_fft_equalizer)
 juce_generate_juce_header(juce_fft_equalizer)
 
 target_sources(juce_fft_equalizer 
@@ -42,7 +42,7 @@ target_compile_definitions(juce_fft_equalizer
         JUCE_USE_MP3AUDIOFORMAT=1
         JUCE_WEB_BROWSER=0
         JUCE_USE_CURL=0
-        JUCE_APPLICATION_NAME_STRING="$<TARGET_PROPERTY:juce_fft_equalizer,JUCE_PRODUCT_NAME>"
+        JUCE_APPLICATION_NAME_STRING="FFT Equalizer"
         JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:juce_fft_equalizer,JUCE_VERSION>"
         JUCE_DISPLAY_SPLASH_SCREEN=0
 )
@@ -57,5 +57,5 @@ target_link_libraries(juce_fft_equalizer
         juce::juce_recommended_warning_flags
 )
 
-install(TARGETS juce_fft_equalizer DESTINATION bin)
-install(DIRECTORY ${juce_fft_equalizer_SOURCE_DIR}/AudioSamples/ DESTINATION bin/samples)
+install(TARGETS juce_fft_equalizer DESTINATION .)
+install(DIRECTORY ${juce_fft_equalizer_SOURCE_DIR}/AudioSamples/ DESTINATION samples)
