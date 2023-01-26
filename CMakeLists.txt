@@ -25,7 +25,7 @@ if (DOXYGEN_FOUND)
 endif()
 
 juce_add_gui_app(juce_fft_equalizer)
-juce_generate_juce_header(juce_fft_equalizer)
+juce_generate_juce_header(juce_fft_equalizer PRODUCT_NAME "FFT Equalizer")
 
 target_sources(juce_fft_equalizer 
     PRIVATE 
@@ -42,7 +42,7 @@ target_compile_definitions(juce_fft_equalizer
         JUCE_USE_MP3AUDIOFORMAT=1
         JUCE_WEB_BROWSER=0
         JUCE_USE_CURL=0
-        JUCE_APPLICATION_NAME_STRING="FFT Equalizer"
+        JUCE_APPLICATION_NAME_STRING="juce_fft_equalizer"
         JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:juce_fft_equalizer,JUCE_VERSION>"
         JUCE_DISPLAY_SPLASH_SCREEN=0
 )
