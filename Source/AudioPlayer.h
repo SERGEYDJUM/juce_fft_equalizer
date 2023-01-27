@@ -43,6 +43,10 @@ class AudioPlayer : public AudioAppComponent, public ChangeListener {
      */
     void selectFile();
 
+    /// @brief Возвращает название файла, который играет в данный момент (или на паузе).
+    /// @return название файла с расширением.
+    String getPlayingFileName() { return file_name_; }
+
     /**
      * @brief Устанавливает громкость.
      * @param new_level громкость от 0 до 1.
@@ -65,7 +69,7 @@ class AudioPlayer : public AudioAppComponent, public ChangeListener {
     /// перематывает назад.
     void jumpSeconds(double seconds);
 
-    ~AudioPlayer() override;
+    ~AudioPlayer() noexcept override;
 
 #ifdef FFT_DATA_LOGGING
     /// @brief Указывает эквалайзеру записать результат FFT следующего
@@ -79,6 +83,8 @@ class AudioPlayer : public AudioAppComponent, public ChangeListener {
 
     /// @brief Позиция проигрывания
     double playback_position_ = 0.0;
+
+    String file_name_;
 
     /// @brief Встроенный эквалайзер
     Equalizer equalizer_;

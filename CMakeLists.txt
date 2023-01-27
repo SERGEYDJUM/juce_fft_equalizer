@@ -24,8 +24,8 @@ if (DOXYGEN_FOUND)
     doxygen_add_docs(docs ${EQ_SRC} ALL)
 endif()
 
-juce_add_gui_app(juce_fft_equalizer)
-juce_generate_juce_header(juce_fft_equalizer PRODUCT_NAME "FFT-equalizer")
+juce_add_gui_app(juce_fft_equalizer PRODUCT_NAME "FFT-equalizer")
+juce_generate_juce_header(juce_fft_equalizer)
 
 target_sources(juce_fft_equalizer 
     PRIVATE 

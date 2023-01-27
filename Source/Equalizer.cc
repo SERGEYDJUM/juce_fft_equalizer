@@ -10,11 +10,11 @@
 #endif
 
 Equalizer::Equalizer(unsigned int fft_order)
-    : fft_{fft_order},
-      //   fft_gains_{10},
+    :  //   fft_gains_{10},
+      base_freq_{0},
       block_size_{1u << fft_order},
       sample_rate_{0},
-      base_freq_{0} {
+      fft_{fft_order} {
     harmonic_gain_.fill(1.0f);
 
     // Данные взяты из ISO 266
@@ -34,7 +34,7 @@ void Equalizer::updateSampleRate(float new_sample_rate) {
         throw std::domain_error("Sample rate is out of range");
 
     sample_rate_ = new_sample_rate;
-    base_freq_ = sample_rate_ / block_size_;
+    base_freq_ = sample_rate_ / static_cast<float>(block_size_);
 
     // Я не знаю, почему так вышло, но так надо, чтобы частоты
     // более-менее правильно определялись
@@ -77,7 +77,7 @@ void Equalizer::_generate_harmonic_gain() {
     std::ofstream band_data_log;
     band_data_log.open("last_band_data.csv");
     band_data_log << "frequency,gain" << std::endl;
-    for (int i = 0; i < harmonic_gain_.size(); i++) {
+    for (unsigned int i = 0; i < harmonic_gain_.size(); i++) {
         band_data_log << i << ',' << harmonic_gain_[i] << '\n';
     }
     band_data_log.close();
@@ -94,8 +94,8 @@ void Equalizer::equalizeBuffer(const AudioSourceChannelInfo& filledBuffer) {
 
         for (unsigned int i = 1; i < block_size_ / 2; ++i) {
             // Частота i-го слота FFT
-            auto freq =
-                static_cast<unsigned int>(base_freq_ * i - base_freq_ / 2);
+            auto freq = static_cast<unsigned int>(
+                base_freq_ * static_cast<float>(i) - base_freq_ / 2);
 
             // Никто не услышит, да и полосы там не определены
             if (freq >= 23000) break;
@@ -103,7 +103,7 @@ void Equalizer::equalizeBuffer(const AudioSourceChannelInfo& filledBuffer) {
             float real = fft_[i].real();
             float imag = fft_[i].imag();
             float magnitude = sqrtf(real * real + imag * imag);
-            float phase = atan2(imag, real);
+            float phase = atan2f(imag, real);
             fft_[i] = std::polar(magnitude * harmonic_gain_[freq], phase);
 
             // Вторая половина блока - это комплексно сопряженные числа
@@ -120,15 +120,16 @@ void Equalizer::equalizeBuffer(const AudioSourceChannelInfo& filledBuffer) {
             eq_data_log << "0," + std::to_string(fft_[0].real()) + ",0.0\n";
 
             for (size_t i = 1; i <= block_size_ / 2; ++i) {
-                auto harmonic =
-                    static_cast<size_t>(base_freq_ * i - base_freq_ / 2);
+                auto harmonic = static_cast<size_t>(
+                    base_freq_ * static_cast<float>(i) - base_freq_ / 2);
                 float real = fft_[i].real();
                 float imag = fft_[i].imag();
-                eq_data_log << std::to_string(harmonic) + ',' +
+                eq_data_log
+                    << std::to_string(harmonic) + ',' +
                            std::to_string(sqrtf(real * real + imag * imag)) +
                            ',' + std::to_string(atan2(imag, real)) + '\n';
             }
-            
+
             eq_data_log.close();
             log_next_block = false;
         }

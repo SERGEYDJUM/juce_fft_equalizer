@@ -5,7 +5,8 @@
 
 #include "MainComponent.h"
 
-MainComponent::MainComponent() {
+MainComponent::MainComponent(std::function<void(String)> title_change_callback)
+    : title_callback{title_change_callback} {
     for (int i = 0; i < bands_num_; ++i) {
         knobs_.add(new Slider);
         auto &knob = *knobs_.getLast();
@@ -66,7 +67,7 @@ MainComponent::MainComponent() {
     setSize(700, 400);
 }
 
-MainComponent::~MainComponent() {
+MainComponent::~MainComponent() noexcept {
     player_ = nullptr;
     volume_slider_ = nullptr;
     fileselect_button_ = nullptr;
@@ -120,9 +121,9 @@ void MainComponent::sliderValueChanged(Slider *sliderThatWasMoved) {
     if (sliderThatWasMoved == volume_slider_.get()) {
         player_->setVolumeGain(slider_value / 100);
     } else {
-        for (unsigned int i = 0; i < bands_num_; i++) {
+        for (int i = 0; i < bands_num_; i++) {
             if (knobs_[i] == sliderThatWasMoved) {
-                player_->updateEqualizerBand(i, slider_value);
+                player_->updateEqualizerBand(static_cast<unsigned int>(i), slider_value);
                 break;
             }
         }
@@ -142,18 +143,22 @@ void MainComponent::buttonClicked(Button *buttonThatWasClicked) {
 }
 
 void MainComponent::playerStateChanged(AudioPlayer *playerWhichStateChanged) {
+    auto file_name = playerWhichStateChanged->getPlayingFileName();
     switch (playerWhichStateChanged->getState()) {
         case AudioPlayer::Stopped:
             playback_button_->setButtonText("Play Again");
+            title_callback(file_name + " - Stopped");
             break;
 
         case AudioPlayer::Playing:
             playback_button_->setEnabled(true);
             playback_button_->setButtonText("Pause");
+            title_callback(file_name + " - Playing");
             break;
 
         case AudioPlayer::Paused:
             playback_button_->setButtonText("Resume");
+            title_callback(file_name + " - Paused");
             break;
     }
 }

@@ -15,7 +15,8 @@ class MainComponent : public Component,
                       public Button::Listener {
    public:
     /// @brief Конструирует весь контент основного окна и создаёт плеер.
-    MainComponent();
+    /// @param title_change_callback коллбэк для изменения заголовка окна.
+    MainComponent(std::function<void(String)> title_change_callback);
 
     /// @brief Вызывается при изменении размера окна, адаптирует контент.
     void resized() override;
@@ -39,11 +40,11 @@ class MainComponent : public Component,
     /// @return было ли нажатие обработано.
     bool keyPressed(const KeyPress &k, Component *c) override;
 
-    ~MainComponent() override;
+    ~MainComponent() noexcept override;
 
    private:
     /// @brief Количество регулируемых диапазонов частот (полос)
-    static constexpr unsigned int bands_num_ = 11;
+    static constexpr int bands_num_ = 11;
 
     /// @brief Плеер со встроенным эквалайзером
     std::unique_ptr<AudioPlayer> player_;
@@ -66,5 +67,7 @@ class MainComponent : public Component,
     /// @brief Надпись "Громкость"
     std::unique_ptr<Label> volume_label_;
 
+    /// @brief Коллбэк для изменения заголовка окна
+    std::function<void(String)> title_callback;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

@@ -10,8 +10,8 @@
 AudioPlayer::AudioPlayer(std::function<void(AudioPlayer *)> callback,
                          unsigned int buffer_size_order)
     : state_{Stopped},
-      state_callback_{callback},
-      equalizer_{buffer_size_order} {
+      equalizer_{buffer_size_order},
+      state_callback_{callback} {
     format_manager_.registerBasicFormats();
     transport_source_.addChangeListener(this);
     setAudioChannels(0, 2);
@@ -65,10 +65,12 @@ void AudioPlayer::getNextAudioBlock(
 
 void AudioPlayer::releaseResources() { transport_source_.releaseResources(); }
 
-AudioPlayer::~AudioPlayer() {
-    shutdownAudio();
+AudioPlayer::~AudioPlayer() noexcept {
+    transport_source_.stop();
     reader_source_ = nullptr;
     chooser_ = nullptr;
+    state_callback_ = nullptr;
+    shutdownAudio();
 }
 
 void AudioPlayer::selectFile() {
@@ -84,6 +86,7 @@ void AudioPlayer::selectFile() {
                 changeState(Stopped);
                 auto new_reader_source =
                     std::make_unique<AudioFormatReaderSource>(reader, true);
+                file_name_ = file.getFileName();
                 transport_source_.setSource(new_reader_source.get(), 0, nullptr,
                                             reader->sampleRate);
                 std::swap(new_reader_source, reader_source_);

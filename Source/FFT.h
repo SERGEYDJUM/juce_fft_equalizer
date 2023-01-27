@@ -87,7 +87,7 @@ class FFT {
     /// @brief Итеративный aлгоритм Cooley–Tukey (Decimation-in-frequency)
     /// @details Источник: https://rosettacode.org/wiki/Fast_Fourier_transform
     void fft() {
-        auto phiT = std::polar(1.0f, -3.141592741f / size_);
+        auto phiT = std::polar(1.0f, -3.141592741f / static_cast<float>(size_));
         unsigned int half_k = size_, k;
         while (half_k != 0) {
             k = half_k;

@@ -37,9 +37,8 @@ class juce_fft_equalizer : public JUCEApplication {
     void systemRequestedQuit() override { quit(); }
 
     /// @brief Создаёт новое окно
-    /// @param arguments аргументы при запуске 
-    void initialise(const String &arguments) override {
-        arguments;
+    /// @param arguments аргументы при запуске
+    void initialise(const String &) override {
         mainWindow.reset(new MainWindow(getApplicationName()));
     }
 
@@ -55,7 +54,11 @@ class juce_fft_equalizer : public JUCEApplication {
                       ResizableWindow::backgroundColourId),
                   DocumentWindow::allButtons) {
             setUsingNativeTitleBar(false);
-            setContentOwned(new MainComponent(), true);
+            
+            setContentOwned(new MainComponent([this](String new_title) {
+                                this->setName(new_title);
+                            }),
+                            true);
 
 #if JUCE_IOS || JUCE_ANDROID
             setFullScreen(true);
