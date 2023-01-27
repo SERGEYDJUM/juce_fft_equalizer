@@ -65,12 +65,9 @@ void AudioPlayer::getNextAudioBlock(
 
 void AudioPlayer::releaseResources() { transport_source_.releaseResources(); }
 
-AudioPlayer::~AudioPlayer() noexcept {
-    transport_source_.stop();
-    reader_source_ = nullptr;
-    chooser_ = nullptr;
-    state_callback_ = nullptr;
-    shutdownAudio();
+AudioPlayer::~AudioPlayer() noexcept { 
+  transport_source_.setSource(nullptr);
+  shutdownAudio();
 }
 
 void AudioPlayer::selectFile() {

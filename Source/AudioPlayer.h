@@ -69,6 +69,25 @@ class AudioPlayer : public AudioAppComponent, public ChangeListener {
     /// перематывает назад.
     void jumpSeconds(double seconds);
 
+    
+    /// @brief Вызывается при изменении состояния AudioTransportSource,
+    /// используется для обработки остановки трека.
+    /// @param source вызвавший коллбэк.
+    void changeListenerCallback(ChangeBroadcaster *source) override;
+
+    /// @brief Обработчик очередного буфера с аудио.
+    /// @param bufferToFill принятый многоканальный буфер.
+    void getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill) override;
+
+    /// @brief Вызывается для подготовки AudioTransportSource к воспроизведения
+    /// нового файла.
+    /// @param samplesPerBlockExpected ожидаемый размер блока.
+    /// @param sampleRate частота дискретизации.
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
+
+    /// @brief Освобождает ресурсы AudioTransportSource.
+    void releaseResources() override;
+
     ~AudioPlayer() noexcept override;
 
 #ifdef FFT_DATA_LOGGING
@@ -104,24 +123,6 @@ class AudioPlayer : public AudioAppComponent, public ChangeListener {
 
     /// @brief Хранит коллбэк, вызываемый при изменении состояния
     std::function<void(AudioPlayer *)> state_callback_;
-
-    /// @brief Вызывается при изменении состояния AudioTransportSource,
-    /// используется для обработки остановки трека.
-    /// @param source вызвавший коллбэк.
-    void changeListenerCallback(ChangeBroadcaster *source) override;
-
-    /// @brief Обработчик очередного буфера с аудио.
-    /// @param bufferToFill принятый многоканальный буфер.
-    void getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill) override;
-
-    /// @brief Вызывается для подготовки AudioTransportSource к воспроизведения
-    /// нового файла.
-    /// @param samplesPerBlockExpected ожидаемый размер блока.
-    /// @param sampleRate частота дискретизации.
-    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
-
-    /// @brief Освобождает ресурсы AudioTransportSource.
-    void releaseResources() override;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPlayer)
 };

@@ -40,7 +40,7 @@ class MainComponent : public Component,
     /// @return было ли нажатие обработано.
     bool keyPressed(const KeyPress &k, Component *c) override;
 
-    ~MainComponent() noexcept override;
+    ~MainComponent() noexcept override {}
 
    private:
     /// @brief Количество регулируемых диапазонов частот (полос)
@@ -69,5 +69,6 @@ class MainComponent : public Component,
 
     /// @brief Коллбэк для изменения заголовка окна
     std::function<void(String)> title_callback;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

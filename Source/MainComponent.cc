@@ -67,15 +67,6 @@ MainComponent::MainComponent(std::function<void(String)> title_change_callback)
     setSize(700, 400);
 }
 
-MainComponent::~MainComponent() noexcept {
-    player_ = nullptr;
-    volume_slider_ = nullptr;
-    fileselect_button_ = nullptr;
-    playback_button_ = nullptr;
-    knobs_.clear(true);
-    knob_labels_.clear(true);
-}
-
 void MainComponent::resized() {
     Grid grid;
     grid.templateRows = {

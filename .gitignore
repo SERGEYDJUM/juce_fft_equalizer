@@ -1,4 +1,6 @@
 build
 .vscode
+.vs
 docs
 bin
+out
