@@ -4,9 +4,6 @@
 
 Supports wav, mp3 and flac audiofiles for now.
 
-*Currently in progress*
-
-
 # Building and installing
 
 It assumes that CMake, Git and build tools are already installed. 
